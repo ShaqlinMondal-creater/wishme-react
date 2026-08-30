@@ -1,0 +1,5 @@
+export type { Occasion, OccasionSlug } from '@/shared/types/occasion.ts'
+export type { Template, TemplateTone } from '@/shared/types/template.ts'
+export type { Project, ProjectStatus } from '@/shared/types/project.ts'
+export type { User } from '@/shared/types/user.ts'
+export type { PricingPlan } from '@/shared/types/pricing.ts'

@@ -1,0 +1,130 @@
+@keyframes wish-ken-in {
+  from {
+    transform: scale(1.16) translate3d(-2.5%, 1.5%, 0);
+  }
+  to {
+    transform: scale(1) translate3d(0, 0, 0);
+  }
+}
+
+@keyframes wish-ken-out {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.18) translate3d(2%, -1.5%, 0);
+  }
+}
+
+@keyframes wish-float-emoji {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 12px, 0) scale(0.55) rotate(-8deg);
+  }
+  10% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(var(--wish-drift), -120vh, 0) scale(1.25) rotate(12deg);
+  }
+}
+
+@keyframes wish-eq {
+  0%,
+  100% {
+    transform: scaleY(0.28);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes wish-spark {
+  0%,
+  100% {
+    opacity: 0.15;
+    transform: scale(0.6);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes wish-clock-hand {
+  from {
+    transform: rotate(var(--from));
+  }
+  to {
+    transform: rotate(var(--to));
+  }
+}
+
+@keyframes wish-gold-flash {
+  0%,
+  100% {
+    opacity: 0;
+  }
+  45%,
+  55% {
+    opacity: 0.55;
+  }
+}
+
+@keyframes wish-rise-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 18px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.wish-ken-in {
+  animation: wish-ken-in 14s linear forwards;
+}
+
+.wish-ken-out {
+  animation: wish-ken-out 14s linear forwards;
+}
+
+.wish-ken-paused,
+.wish-eq-paused {
+  animation-play-state: paused !important;
+}
+
+.wish-eq-bar {
+  transform-origin: center bottom;
+  animation: wish-eq 0.9s ease-in-out infinite;
+}
+
+.wish-spark {
+  animation: wish-spark 2.4s ease-in-out infinite;
+}
+
+.wish-float-emoji {
+  animation: wish-float-emoji 2.8s ease-out forwards;
+}
+
+.wish-rise {
+  animation: wish-rise-in 0.9s ease-out both;
+}
+
+.wish-clock-hour {
+  --from: 300deg;
+  --to: 0deg;
+  animation: wish-clock-hand 8s ease-in-out forwards;
+}
+
+.wish-clock-minute {
+  --from: 330deg;
+  --to: 0deg;
+  animation: wish-clock-hand 8s ease-in-out forwards;
+}
+
+.wish-gold-flash {
+  animation: wish-gold-flash 1.4s ease-in-out 7.2s 2 both;
+}
