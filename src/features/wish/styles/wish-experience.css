@@ -83,6 +83,20 @@
   }
 }
 
+@keyframes wish-seal-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(196, 163, 90, 0.18);
+  }
+  50% {
+    box-shadow: 0 0 0 10px rgba(196, 163, 90, 0);
+  }
+}
+
+.wish-seal-cta {
+  animation: wish-seal-glow 2.8s ease-in-out infinite;
+}
+
 .wish-ken-in {
   animation: wish-ken-in 14s linear forwards;
 }
@@ -127,4 +141,267 @@
 
 .wish-gold-flash {
   animation: wish-gold-flash 1.4s ease-in-out 7.2s 2 both;
+}
+
+@keyframes wish-card-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 16px, 0) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes wish-envelope {
+  from {
+    transform: translate3d(0, 28px, 0) rotateX(8deg);
+    opacity: 0;
+  }
+  to {
+    transform: translate3d(0, 0, 0) rotateX(0deg);
+    opacity: 1;
+  }
+}
+
+.wish-card-in {
+  animation: wish-card-in 0.7s ease-out both;
+}
+
+.wish-envelope {
+  animation: wish-envelope 0.85s ease-out both;
+}
+
+.wish-env {
+  perspective: 1100px;
+}
+
+.wish-env-body {
+  animation: wish-envelope 0.85s ease-out both;
+  transform-style: preserve-3d;
+  transition: transform 0.45s ease;
+}
+
+.wish-env:hover .wish-env-body {
+  transform: translate3d(0, -6px, 0);
+}
+
+.wish-env-flap {
+  transform-style: preserve-3d;
+  transition: transform 0.85s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.wish-env-sheet {
+  transition: transform 0.7s 0.18s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.wish-env-seal {
+  transition:
+    opacity 0.45s ease,
+    transform 0.45s ease;
+}
+
+.wish-env.is-opening .wish-env-flap {
+  transform: rotateX(-172deg);
+}
+
+.wish-env.is-opening .wish-env-sheet {
+  transform: translate3d(0, -28%, 0);
+}
+
+.wish-env.is-opening .wish-env-seal {
+  opacity: 0;
+  transform: scale(0.7) translate3d(0, -12px, 0);
+}
+
+@keyframes wish-foil-shine {
+  0% {
+    background-position: 120% 0;
+  }
+  100% {
+    background-position: -40% 0;
+  }
+}
+
+@keyframes wish-seal-press {
+  0% {
+    transform: scale(1.35);
+    opacity: 0;
+  }
+  70% {
+    transform: scale(0.94);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes wish-paper-lift {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 40px, 0) rotateX(12deg);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) rotateX(0);
+  }
+}
+
+@keyframes wish-polaroid {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 24px, 0) rotate(var(--tilt, -2deg)) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) rotate(var(--tilt, -2deg)) scale(1);
+  }
+}
+
+.wish-paper-lift {
+  animation: wish-paper-lift 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.wish-polaroid {
+  animation: wish-polaroid 0.85s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.wish-polaroid-live {
+  transform: rotate(var(--tilt, -2deg));
+  transform-origin: 50% 70%;
+  transition:
+    transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.45s ease;
+}
+
+.wish-polaroid-live:hover,
+.wish-polaroid-live:focus-visible {
+  transform: rotate(0deg) translate3d(0, -10px, 0) scale(1.03);
+  box-shadow: 0 28px 48px -18px rgb(0 0 0 / 0.7);
+  z-index: 2;
+}
+
+@keyframes wish-polaroid-zoom {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.14);
+  }
+}
+
+.wish-polaroid-zoom {
+  animation: wish-polaroid-zoom 12s ease-in-out alternate infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wish-polaroid-zoom,
+  .wish-polaroid-live,
+  .wish-env-body,
+  .wish-env-flap,
+  .wish-env-sheet,
+  .wish-env-seal {
+    animation: none;
+    transition: none;
+  }
+
+  .wish-polaroid-live:hover,
+  .wish-polaroid-live:focus-visible {
+    transform: rotate(var(--tilt, -2deg));
+  }
+}
+
+.wish-ticket {
+  background: linear-gradient(180deg, #efe2c4 0%, #d4b56a 48%, #b0893a 100%);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 244, 200, 0.35),
+    0 10px 22px -14px rgb(0 0 0 / 0.75);
+}
+
+.wish-ticket-won {
+  box-shadow:
+    0 0 0 1px #c4a35a,
+    0 18px 36px -16px rgb(196 163 90 / 0.7);
+  transform: scale(1.03);
+}
+
+.wish-ticket-locked {
+  filter: saturate(0.7);
+  opacity: 0.72;
+}
+
+.wish-ticket-notch {
+  position: absolute;
+  top: 50%;
+  z-index: 3;
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: #070f1c;
+  transform: translateY(-50%);
+}
+
+.wish-ticket-notch-left {
+  left: -5px;
+}
+
+.wish-ticket-notch-right {
+  right: -5px;
+}
+
+@media (min-width: 640px) {
+  .wish-ticket-notch {
+    width: 14px;
+    height: 14px;
+  }
+
+  .wish-ticket-notch-left {
+    left: -7px;
+  }
+
+  .wish-ticket-notch-right {
+    right: -7px;
+  }
+}
+
+.wish-seal-press {
+  animation: wish-seal-press 0.7s ease-out both;
+}
+
+.wish-grain {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  opacity: 0.18;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 160 160' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E");
+}
+
+.wish-paper {
+  background-color: #f4eee4;
+  background-image:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.35), transparent 28%),
+    repeating-linear-gradient(
+      180deg,
+      transparent,
+      transparent 27px,
+      rgba(196, 163, 90, 0.12) 28px
+    );
+}
+
+.wish-foil-sheen {
+  background: linear-gradient(
+    115deg,
+    #8f6a2c 0%,
+    #e4c97a 22%,
+    #c4a35a 38%,
+    #fff6d4 48%,
+    #c4a35a 58%,
+    #9c7b32 100%
+  );
+  background-size: 220% 100%;
+  animation: wish-foil-shine 3.6s ease-in-out infinite;
 }

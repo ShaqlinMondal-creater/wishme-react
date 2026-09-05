@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { useParams } from 'react-router-dom'
-import { WishClosed, WishPlayer } from '@/features/wish/components/WishPlayer.tsx'
+import { WishClosed, WishShell } from '@/features/wish/components/WishShell.tsx'
 import { getDemoWish } from '@/features/wish/data/demoWishes.ts'
 import '@/features/wish/styles/wish-experience.css'
 import { isWishStillOpen, isWishTokenFormat } from '@/shared/constants/routes.ts'
@@ -25,5 +25,5 @@ export function WishExperiencePage() {
     return <WishClosed reason="expired" />
   }
 
-  return <WishPlayer wish={wish} />
+  return <WishShell wish={wish} />
 }
