@@ -2,6 +2,15 @@ import type { Project } from '@/shared/types/project.ts'
 
 export const projects: Project[] = [
   {
+    id: 'prj-riya-midnight',
+    title: 'Midnight Toast for Riya',
+    occasion: 'birthday',
+    templateId: 'tpl-midnight-toast',
+    status: 'published',
+    recipientName: 'Riya',
+    updatedAt: '2026-09-05',
+  },
+  {
     id: 'prj-ananya-birthday',
     title: 'For Ananya',
     occasion: 'birthday',

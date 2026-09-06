@@ -17,8 +17,15 @@ import { SupportPage } from '@/features/marketing/pages/SupportPage.tsx'
 import { TemplateDetailPage } from '@/features/marketing/pages/TemplateDetailPage.tsx'
 import { TemplatesPage } from '@/features/marketing/pages/TemplatesPage.tsx'
 import { WishExperiencePage } from '@/features/wish/pages/WishExperiencePage.tsx'
+import { AdminLayout } from '@/features/admin/layout/AdminLayout.tsx'
+import { AdminLoginPage } from '@/features/admin/pages/AdminLoginPage.tsx'
+import { AdminOverviewPage } from '@/features/admin/pages/AdminOverviewPage.tsx'
+import { AdminCustomersPage } from '@/features/admin/pages/AdminCustomersPage.tsx'
+import { AdminWishesPage } from '@/features/admin/pages/AdminWishesPage.tsx'
+import { AdminProfilePage } from '@/features/admin/pages/AdminProfilePage.tsx'
 import { GuestRoute } from '@/app/router/GuestRoute.tsx'
 import { ProtectedRoute } from '@/app/router/ProtectedRoute.tsx'
+import { AdminRoute } from '@/app/router/AdminRoute.tsx'
 
 export function AppRouter() {
   return (
@@ -38,6 +45,7 @@ export function AppRouter() {
           <Route element={<AuthLayout />}>
             <Route path={ROUTES.login} element={<LoginPage />} />
             <Route path={ROUTES.register} element={<RegisterPage />} />
+            <Route path={ROUTES.adminLogin} element={<AdminLoginPage />} />
           </Route>
         </Route>
 
@@ -49,6 +57,15 @@ export function AppRouter() {
             <Route path={ROUTES.dashboardTemplates} element={<DashboardTemplatesPage />} />
             <Route path={ROUTES.billing} element={<BillingPage />} />
             <Route path={ROUTES.profile} element={<ProfilePage />} />
+          </Route>
+        </Route>
+
+        <Route element={<AdminRoute />}>
+          <Route element={<AdminLayout />}>
+            <Route path={ROUTES.admin} element={<AdminOverviewPage />} />
+            <Route path={ROUTES.adminCustomers} element={<AdminCustomersPage />} />
+            <Route path={ROUTES.adminWishes} element={<AdminWishesPage />} />
+            <Route path={ROUTES.adminProfile} element={<AdminProfilePage />} />
           </Route>
         </Route>
 

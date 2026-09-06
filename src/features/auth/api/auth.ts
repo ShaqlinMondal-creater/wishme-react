@@ -1,10 +1,14 @@
 import { apiClient } from '@/shared/api/client.ts'
 import type { AuthPayload, ProfilePayload } from '@/shared/api/types.ts'
 
-export function loginRequest(email: string, password: string): Promise<AuthPayload> {
+export function loginRequest(
+  email: string,
+  password: string,
+  role: 'customer' | 'admin' = 'customer',
+): Promise<AuthPayload> {
   return apiClient<AuthPayload>('/login', {
     method: 'POST',
-    body: { email, password, role: 'customer' },
+    body: { email, password, role },
   })
 }
 

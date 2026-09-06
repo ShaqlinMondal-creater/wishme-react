@@ -4,12 +4,11 @@ import { ApiError, firstFieldError, getApiErrorMessage } from '@/shared/api/clie
 import loginImage from '@/assets/auth/login.png'
 import { AuthPanel } from '@/features/auth/components/AuthPanel.tsx'
 import { DemoCredentialsCard } from '@/features/auth/components/DemoCredentialsCard.tsx'
-import { DEMO_CUSTOMER } from '@/features/auth/data/demoAccounts.ts'
+import { DEMO_ADMIN } from '@/features/auth/data/demoAccounts.ts'
 import { Button } from '@/shared/components/ui/Button.tsx'
 import { Input } from '@/shared/components/ui/Input.tsx'
 import { homePathForRole, ROUTES } from '@/shared/constants/routes.ts'
 import { useAuth } from '@/features/auth/hooks/useAuth.ts'
-import { useAuthStore } from '@/features/auth/store/authStore.ts'
 import type { ApiErrorBag } from '@/shared/api/types.ts'
 
 function getRedirectPath(state: unknown, role?: string | null) {
@@ -18,8 +17,7 @@ function getRedirectPath(state: unknown, role?: string | null) {
     typeof state === 'object' &&
     'from' in state &&
     typeof state.from === 'string' &&
-    state.from.startsWith('/') &&
-    !state.from.startsWith('/admin')
+    state.from.startsWith('/admin')
   ) {
     return state.from
   }
@@ -27,7 +25,7 @@ function getRedirectPath(state: unknown, role?: string | null) {
   return homePathForRole(role)
 }
 
-export function LoginPage() {
+export function AdminLoginPage() {
   const navigate = useNavigate()
   const location = useLocation()
   const { login } = useAuth()
@@ -50,8 +48,8 @@ export function LoginPage() {
     setIsSubmitting(true)
 
     try {
-      await login(email.trim(), password)
-      navigate(getRedirectPath(location.state, useAuthStore.getState().user?.role), { replace: true })
+      await login(email.trim(), password, 'admin')
+      navigate(getRedirectPath(location.state, 'admin'), { replace: true })
     } catch (caught) {
       setError(getApiErrorMessage(caught))
       setFieldErrors(caught instanceof ApiError ? caught.errors : undefined)
@@ -64,20 +62,16 @@ export function LoginPage() {
     <AuthPanel
       image={loginImage}
       imageAlt="A handwritten letter, gold seal and cream roses"
-      panelEyebrow="A private moment"
-      panelQuote="Wishes that feel held, not sent."
-      eyebrow="Welcome back"
-      title="Sign in"
-      description="Continue a wish you started, or open the ones waiting for you."
+      panelEyebrow="WISHME studio"
+      panelQuote="The quiet side of the house."
+      eyebrow="Staff"
+      title="Admin sign in"
+      description="Demo details are ready. This panel is for WishMe, not for the person making a wish."
       footer={
         <p className="text-sm text-navy-muted">
-          New here?{' '}
-          <Link to={ROUTES.register} className="text-gold-deep hover:text-navy">
-            Create an account
-          </Link>
-          <span className="mx-2 text-navy-muted/50">·</span>
-          <Link to={ROUTES.adminLogin} className="text-gold-deep hover:text-navy">
-            Staff
+          Making a wish?{' '}
+          <Link to={ROUTES.login} className="text-gold-deep hover:text-navy">
+            Customer sign in
           </Link>
         </p>
       }
@@ -103,15 +97,15 @@ export function LoginPage() {
         />
         {error ? <p className="text-xs text-red-600">{error}</p> : null}
         <Button type="submit" fullWidth isLoading={isSubmitting}>
-          Continue
+          Enter studio
         </Button>
       </form>
       <DemoCredentialsCard
-        email={DEMO_CUSTOMER.email}
-        password={DEMO_CUSTOMER.password}
+        email={DEMO_ADMIN.email}
+        password={DEMO_ADMIN.password}
         onFill={() => {
-          setEmail(DEMO_CUSTOMER.email)
-          setPassword(DEMO_CUSTOMER.password)
+          setEmail(DEMO_ADMIN.email)
+          setPassword(DEMO_ADMIN.password)
         }}
       />
     </AuthPanel>

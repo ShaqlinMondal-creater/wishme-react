@@ -13,6 +13,11 @@ export const ROUTES = {
   dashboardTemplates: '/dashboard/templates',
   billing: '/dashboard/billing',
   profile: '/dashboard/profile',
+  adminLogin: '/admin/login',
+  admin: '/admin',
+  adminCustomers: '/admin/customers',
+  adminWishes: '/admin/wishes',
+  adminProfile: '/admin/profile',
 } as const
 
 export type AppRoute = (typeof ROUTES)[keyof typeof ROUTES]
@@ -48,6 +53,10 @@ export function templateOpenTarget(templateId: string) {
   }
 
   return { to: templatePath(templateId), openInNewTab: false }
+}
+
+export function homePathForRole(role?: string | null) {
+  return role === 'admin' ? ROUTES.admin : ROUTES.dashboard
 }
 
 export function createWishPath(templateId?: string) {

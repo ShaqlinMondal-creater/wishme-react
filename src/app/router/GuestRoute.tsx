@@ -1,12 +1,12 @@
 import { Navigate, Outlet } from 'react-router-dom'
-import { ROUTES } from '@/shared/constants/routes.ts'
+import { homePathForRole, ROUTES } from '@/shared/constants/routes.ts'
 import { useAuth } from '@/features/auth/hooks/useAuth.ts'
 
 export function GuestRoute() {
-  const { isAuthenticated } = useAuth()
+  const { isAuthenticated, user } = useAuth()
 
   if (isAuthenticated) {
-    return <Navigate to={ROUTES.dashboard} replace />
+    return <Navigate to={homePathForRole(user?.role) ?? ROUTES.dashboard} replace />
   }
 
   return <Outlet />

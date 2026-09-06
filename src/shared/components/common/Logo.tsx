@@ -6,13 +6,14 @@ import { cn } from '@/shared/lib/cn.ts'
 export type LogoProps = {
   compact?: boolean
   inverted?: boolean
+  to?: string
   className?: string
 }
 
-export function Logo({ compact = false, inverted = false, className }: LogoProps) {
+export function Logo({ compact = false, inverted = false, to = ROUTES.home, className }: LogoProps) {
   return (
     <Link
-      to={ROUTES.home}
+      to={to}
       className={cn('inline-flex min-w-0 items-center gap-2.5 sm:gap-3', className)}
       aria-label={APP_NAME}
     >

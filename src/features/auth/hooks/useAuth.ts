@@ -1,3 +1,4 @@
+import { isDemoToken, matchDemoAccount } from '@/features/auth/data/demoAccounts.ts'
 import { useAuthStore } from '@/features/auth/store/authStore.ts'
 import { fetchProfile, loginRequest, logoutRequest, registerRequest } from '@/features/auth/api/auth.ts'
 
@@ -8,8 +9,14 @@ export function useAuth() {
   const setSession = useAuthStore((state) => state.setSession)
   const clearSession = useAuthStore((state) => state.clearSession)
 
-  const login = async (email: string, password: string) => {
-    const payload = await loginRequest(email, password)
+  const login = async (email: string, password: string, role: 'customer' | 'admin' = 'customer') => {
+    const demo = matchDemoAccount(email, password, role)
+    if (demo) {
+      setSession(demo.user, demo.token)
+      return
+    }
+
+    const payload = await loginRequest(email, password, role)
     setSession(payload.user, payload.token)
   }
 
@@ -25,7 +32,7 @@ export function useAuth() {
 
   const logout = async () => {
     try {
-      if (token) {
+      if (token && !isDemoToken(token)) {
         await logoutRequest()
       }
     } catch {
@@ -36,10 +43,14 @@ export function useAuth() {
   }
 
   const refreshProfile = async () => {
+    if (isDemoToken(token) && user) {
+      return { user }
+    }
     const payload = await fetchProfile()
     if (token) {
       setSession(payload.user, token)
     }
+    return payload
   }
 
   return { user, token, isAuthenticated, login, register, logout, refreshProfile }
