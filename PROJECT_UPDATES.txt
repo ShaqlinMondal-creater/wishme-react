@@ -18,7 +18,7 @@ Open the folder that matches the screen you are working on.
     public/     Website: home, templates, pricing, support.
     auth/       Sign in / register (customer + admin login).
     customer/   Logged-in customer dashboard and profile.
-    admin/      Staff studio: customers, wishes, admin profile.
+    admin/      Admin studio: customers, wishes, admin profile.
     wish/       Recipient share page (/w/:token). Full-screen experience.
   services/     All data access. Views and hooks call services, not raw API.
     http.ts             fetch wrapper
@@ -45,6 +45,23 @@ Reuse shortcuts (index files):
 
 LOG
 ---
+
+[2026-09-06] Added full project-plan PDF
+  Why: one document with motive, where we stand, every step to launch, and what to do next.
+  Created
+    docs/WISHME-Project-Plan.html (source)
+    docs/WISHME-Project-Plan.pdf (print)
+
+[2026-09-06] Removed demo login credentials; say Admin not Staff
+  Why: sign-in should use the real auth API. Demo cards on login were not needed yet.
+  Removed
+    src/views/auth/components/DemoCredentialsCard.tsx
+    src/shared/data/demoAccounts.ts
+  Updated
+    Login + admin login now call POST /login only
+    Customer profile now loads GET /profile
+    "Staff" copy changed to "Admin"
+    src/shared/lib/roles.ts (isAdminRole)
 
 [2026-09-06] Moved this log into the frontend project
   Why: the first copy sat at the WishMe workspace root, outside wishme-react.

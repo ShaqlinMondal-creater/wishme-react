@@ -3,8 +3,6 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { ApiError, firstFieldError, getApiErrorMessage } from '@/services/http.ts'
 import loginImage from '@/assets/auth/login.png'
 import { AuthPanel } from '@/views/auth/components/AuthPanel.tsx'
-import { DemoCredentialsCard } from '@/views/auth/components/DemoCredentialsCard.tsx'
-import { DEMO_CUSTOMER } from '@/shared/data/demoAccounts.ts'
 import { Button } from '@/shared/components/ui/Button.tsx'
 import { Input } from '@/shared/components/ui/Input.tsx'
 import { homePathForRole, ROUTES } from '@/shared/constants/routes.ts'
@@ -77,7 +75,7 @@ export function LoginPage() {
           </Link>
           <span className="mx-2 text-navy-muted/50">·</span>
           <Link to={ROUTES.adminLogin} className="text-gold-deep hover:text-navy">
-            Staff
+            Admin
           </Link>
         </p>
       }
@@ -106,14 +104,6 @@ export function LoginPage() {
           Continue
         </Button>
       </form>
-      <DemoCredentialsCard
-        email={DEMO_CUSTOMER.email}
-        password={DEMO_CUSTOMER.password}
-        onFill={() => {
-          setEmail(DEMO_CUSTOMER.email)
-          setPassword(DEMO_CUSTOMER.password)
-        }}
-      />
     </AuthPanel>
   )
 }

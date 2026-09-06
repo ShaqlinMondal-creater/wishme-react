@@ -1,5 +1,5 @@
 import { Navigate, Outlet, useLocation } from 'react-router-dom'
-import { isAdminRole } from '@/shared/data/demoAccounts.ts'
+import { isAdminRole } from '@/shared/lib/roles.ts'
 import { ROUTES } from '@/shared/constants/routes.ts'
 import { useAuth } from '@/shared/hooks/useAuth.ts'
 

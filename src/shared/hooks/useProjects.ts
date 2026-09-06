@@ -8,6 +8,6 @@ export function useProjects() {
 
   return useQuery({
     queryKey: [...queryKeys.projects, token],
-    queryFn: () => getProjects(token),
+    queryFn: getProjects,
   })
 }

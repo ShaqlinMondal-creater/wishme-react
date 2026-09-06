@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>WISHME — Project Plan</title>
+  <style>
+    @page { size: A4; margin: 16mm 15mm 18mm; }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      color: #0b1f3a;
+      background: #fff;
+      font-family: "Segoe UI", Calibri, Arial, sans-serif;
+      font-size: 10.5pt;
+      line-height: 1.45;
+    }
+    h1, h2, h3, h4 {
+      font-family: Georgia, "Times New Roman", serif;
+      font-weight: 600;
+      line-height: 1.2;
+      page-break-after: avoid;
+    }
+    h1 { font-size: 28pt; letter-spacing: 0.04em; margin: 0 0 8pt; }
+    h2 {
+      font-size: 15pt;
+      color: #0b1f3a;
+      border-bottom: 1px solid #c4a35a;
+      padding-bottom: 4pt;
+      margin: 22pt 0 10pt;
+    }
+    h3 { font-size: 12pt; margin: 14pt 0 6pt; }
+    h4 { font-size: 10.5pt; margin: 10pt 0 4pt; }
+    p { margin: 0 0 8pt; }
+    ul, ol { margin: 0 0 10pt; padding-left: 18pt; }
+    li { margin: 0 0 3pt; }
+    .cover {
+      min-height: 240mm;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 18mm 8mm 12mm;
+      page-break-after: always;
+      background: #0b1f3a;
+      color: #f4eee4;
+    }
+    .cover .mark {
+      width: 42px; height: 42px;
+      background: #c4a35a; color: #0b1f3a;
+      font-family: Georgia, serif; font-size: 22pt;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 18pt;
+    }
+    .cover .eyebrow {
+      letter-spacing: 0.28em; text-transform: uppercase;
+      font-size: 8.5pt; color: #c4a35a; margin-bottom: 10pt;
+    }
+    .cover h1 { color: #fff; font-size: 34pt; }
+    .cover .sub { font-size: 13pt; color: #f3ead3; max-width: 420pt; margin: 10pt 0 28pt; }
+    .meta { font-size: 9.5pt; color: #eadfcd; }
+    .meta strong { color: #c4a35a; font-weight: 600; }
+    .badge {
+      display: inline-block; font-size: 8pt; letter-spacing: 0.14em;
+      text-transform: uppercase; padding: 2pt 7pt; border-radius: 99px;
+      border: 1px solid #c4a35a; color: #9c7b32; margin-right: 4pt;
+    }
+    .badge.done { background: #f3ead3; color: #0b1f3a; border-color: #c4a35a; }
+    .badge.next { background: #0b1f3a; color: #c4a35a; border-color: #0b1f3a; }
+    .badge.wait { background: #fbf8f3; color: #5c6d82; border-color: #eadfcd; }
+    table {
+      width: 100%; border-collapse: collapse; margin: 0 0 12pt;
+      font-size: 9.5pt; page-break-inside: auto;
+    }
+    th, td {
+      border: 1px solid #eadfcd; padding: 6pt 7pt; text-align: left; vertical-align: top;
+    }
+    th { background: #f4eee4; font-weight: 600; letter-spacing: 0.04em; }
+    tr { page-break-inside: avoid; }
+    .box {
+      background: #fbf8f3; border-left: 3px solid #c4a35a;
+      padding: 8pt 10pt; margin: 0 0 12pt;
+    }
+    .loop {
+      background: #0b1f3a; color: #f4eee4; padding: 12pt 14pt; margin: 0 0 12pt;
+    }
+    .loop strong { color: #c4a35a; }
+    .small { font-size: 9pt; color: #5c6d82; }
+    code { font-family: Consolas, "Courier New", monospace; font-size: 8.8pt; }
+    .keep { page-break-inside: avoid; }
+    footer.note { font-size: 8.5pt; color: #5c6d82; margin-top: 18pt; }
+  </style>
+</head>
+<body>
+
+<section class="cover">
+  <div class="mark">W</div>
+  <p class="eyebrow">By LIWAAS · Internal document</p>
+  <h1>WISHME<br />Project Plan</h1>
+  <p class="sub">All steps from today to launch: motive, where we stand, what is done, and what to do next — with enough detail to build from.</p>
+  <p class="meta">
+    <strong>Date</strong> 6 September 2026<br />
+    <strong>Status</strong> Foundation complete · The real wish loop is not live yet<br />
+    <strong>Product</strong> wishme.liwaas.com<br />
+    <strong>API</strong> api-wishme.liwaas.com/api<br />
+    <strong>Code</strong> wishme-react (frontend) · api-wishme (Laravel)
+  </p>
+</section>
+
+<h2>1. Motive — what this product is for</h2>
+<p>WISHME is not a greeting-card shop and not a chat app. It is a <strong>personalized digital keepsake</strong> under LIWAAS. A forwarded WhatsApp wish disappears. WISHME is for the birthday, rakhi, anniversary or blessing you want someone to reopen.</p>
+<p>The person who loves someone (the <strong>customer</strong>) makes a private experience: their person’s name, photographs, a letter, video, a song. They publish it. The person who receives it (the <strong>recipient</strong>) opens a unique link or scans a QR and sits in a small world for a few minutes — like a letter, not a notification.</p>
+<p>You (LIWAAS) run the <strong>admin</strong> studio: customers, wishes, templates, plans. WISHME should feel emotional, celebratory and premium: cream, navy <code>#0b1f3a</code>, gold <code>#c4a35a</code> — different from LIWAAS ecommerce.</p>
+
+<div class="loop">
+  <strong>The product loop (this is the whole project)</strong><br />
+  Choose occasion → choose template → edit content → save draft → pay if premium → publish → unique 22-character link / QR → recipient opens a private animated wish (about 2–3 minutes) → link can expire, wait for a scheduled time, or ask for a password.
+</div>
+
+<p>Until that loop works with <strong>real saved data</strong>, the product is not finished. Screens and auth are the house. The loop is the product.</p>
+
+<h2>2. Where we stand — 6 September 2026</h2>
+<p>Phase 1 from the original brief (clean foundation) is done and has grown: full public site, real auth APIs, customer dashboard shell, admin shell, and one complete recipient experience (Midnight Toast). Demo login cards have been removed. Sign-in uses the Laravel API only. “Staff” is now “Admin”.</p>
+
+<h3>2.1 Done</h3>
+<table>
+  <thead>
+    <tr><th>Area</th><th>What exists</th><th>Live data?</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Public site</td><td>Home, Templates, Template detail, Pricing, Support. Brand, photos, occasions, six+ templates, how-it-works, plans.</td><td>Frontend mock data</td></tr>
+    <tr><td>Auth UI</td><td>Customer login <code>/login</code>, register <code>/register</code>, admin login <code>/admin/login</code>. No demo credentials on screen.</td><td>Real API</td></tr>
+    <tr><td>Auth API</td><td>Register, login (with role), logout, get profile, update profile, forgot password, reset password.</td><td>Real API — see 2.3</td></tr>
+    <tr><td>Customer dashboard</td><td>Overview, My Projects, Create, Templates, Billing, Profile. Sidebar + mobile tab bar.</td><td>Projects still mock</td></tr>
+    <tr><td>Admin studio</td><td>Overview, Customers, Wishes, Admin profile. Role-gated. Navy sidebar.</td><td>Dummy lists</td></tr>
+    <tr><td>Recipient wish</td><td>Midnight Toast at <code>/w/{22-char-token}</code>, 72-hour window. Gate, five rooms (letter, stories, moments, privacy, gift), stories like WhatsApp/IG, emoji, mobile + desktop.</td><td>Hardcoded demo wish only</td></tr>
+    <tr><td>Frontend structure</td><td><code>views/public | auth | customer | admin | wish</code> + <code>services/</code> + <code>shared/</code>. Ready for more APIs.</td><td>—</td></tr>
+    <tr><td>Design system</td><td>Button, Input, Card, Modal, Logo, cards, empty/loading, layouts.</td><td>—</td></tr>
+  </tbody>
+</table>
+
+<h3>2.2 Not done (this is the remaining project)</h3>
+<table>
+  <thead>
+    <tr><th>Missing</th><th>Why it matters</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Wish editor</td><td>Create-project only picks occasion + template. No names, letter, photos, video, music. Core product.</td></tr>
+    <tr><td>Save / draft / publish APIs</td><td>Nothing the customer makes is stored on the server.</td></tr>
+    <tr><td>Dynamic recipient page</td><td>Midnight Toast is a sample. A published project must drive <code>/w/{token}</code> from database content.</td></tr>
+    <tr><td>Token, 72 hours, password, schedule</td><td>Rules exist in frontend helpers only. Not issued by the API.</td></tr>
+    <tr><td>QR share card</td><td>Promised on Signature plan. Not built.</td></tr>
+    <tr><td>Razorpay</td><td>Billing page shows plans. Nothing is charged.</td></tr>
+    <tr><td>Catalog APIs</td><td>Occasions and templates are still files in <code>shared/data</code>.</td></tr>
+    <tr><td>Live admin</td><td>Customers and wishes are dummy rows.</td></tr>
+    <tr><td>Profile edit + forgot password UI</td><td>APIs exist; screens do not use them yet.</td></tr>
+    <tr><td>More full templates</td><td>Only Midnight Toast is a full recipient experience. Others are gallery cards.</td></tr>
+    <tr><td>Occasions not in gallery yet</td><td>Valentine’s, Mother’s Day, Father’s Day, custom — named in the original brief, not built.</td></tr>
+  </tbody>
+</table>
+
+<h3>2.3 Auth APIs (current)</h3>
+<p>Base URL: <code>https://api-wishme.liwaas.com/api</code> (local: Laravel <code>/api</code>).</p>
+<table>
+  <thead>
+    <tr><th>Method</th><th>Path</th><th>Auth</th><th>Frontend</th><th>Status</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>POST</td><td>/register</td><td>No</td><td>Register page</td><td>Wired. Always creates role customer.</td></tr>
+    <tr><td>POST</td><td>/login</td><td>No</td><td>Customer + admin login</td><td>Wired. Body includes <code>role</code> so admin cannot use customer login and vice versa.</td></tr>
+    <tr><td>POST</td><td>/logout</td><td>Bearer</td><td>Sign out</td><td>Wired.</td></tr>
+    <tr><td>GET</td><td>/profile</td><td>Bearer</td><td>Customer profile</td><td>Wired, read-only UI.</td></tr>
+    <tr><td>PUT</td><td>/profile</td><td>Bearer</td><td>Not used</td><td>API ready. UI later.</td></tr>
+    <tr><td>POST</td><td>/forgot-password</td><td>No</td><td>Not used</td><td>API ready. OTP is only written to the server log — not emailed/SMS yet.</td></tr>
+    <tr><td>POST</td><td>/reset-password</td><td>No</td><td>Not used</td><td>API ready. No screen.</td></tr>
+  </tbody>
+</table>
+<p class="small">There are no APIs yet for occasions, templates, projects, publish, media, QR, payments, or admin lists.</p>
+
+<h3>2.4 Frontend map (so you know where to open files)</h3>
+<table>
+  <thead><tr><th>Folder</th><th>Who it is for</th></tr></thead>
+  <tbody>
+    <tr><td><code>src/views/public</code></td><td>Website: home, templates, pricing, support</td></tr>
+    <tr><td><code>src/views/auth</code></td><td>Customer login, register, admin login</td></tr>
+    <tr><td><code>src/views/customer</code></td><td>Dashboard, projects, profile, billing</td></tr>
+    <tr><td><code>src/views/admin</code></td><td>Admin studio</td></tr>
+    <tr><td><code>src/views/wish</code></td><td>Recipient share page</td></tr>
+    <tr><td><code>src/services</code></td><td>All API / data access. Do not call fetch from pages.</td></tr>
+    <tr><td><code>src/shared</code></td><td>Buttons, hooks, types, constants, mock data until APIs exist</td></tr>
+  </tbody>
+</table>
+<p class="small">Change log for every file move from now on: <code>wishme-react/PROJECT_UPDATES.txt</code>.</p>
+
+<h2>3. How to read the steps</h2>
+<p>Do them <strong>in order</strong> unless you choose to skip a small auth UI item. Each step says: goal, details, APIs, screens, and “done when”. Do not start Razorpay or extra templates before a customer can save and publish at least one Midnight Toast wish with their own photos.</p>
+
+<div class="box">
+  <strong>Next action after this document:</strong> Step 2 (catalog APIs) then Step 3 (editor). Step 1 (profile / forgot password) can sit beside that if you want accounts nicer first — it is not the product loop.
+</div>
+
+<h2>4. All steps — foundation to launch</h2>
+
+<div class="keep">
+<h3>Step 0 — Foundation <span class="badge done">Done</span></h3>
+<p><strong>Goal.</strong> A professional, responsive house ready for modules.</p>
+<ul>
+  <li>React + TypeScript + Vite + Tailwind, React Router, TanStack Query, Zustand, GSAP.</li>
+  <li>Laravel REST API, Sanctum, hashed passwords, roles customer / admin.</li>
+  <li>Public marketing site with real photography and copy.</li>
+  <li>Dashboard + admin layouts, reusable UI kit.</li>
+  <li>Midnight Toast as the quality bar for a recipient wish.</li>
+  <li>Folder structure split by public / auth / customer / admin / wish + services.</li>
+  <li>Real login (demo cards removed). Copy says Admin, not Staff.</li>
+</ul>
+<p><strong>Done when.</strong> Already true as of 6 Sep 2026.</p>
+</div>
+
+<div class="keep">
+<h3>Step 1 — Finish the account <span class="badge wait">API ready · UI missing</span></h3>
+<p><strong>Goal.</strong> A customer can edit profile and recover a password. An admin can do the same.</p>
+<h4>Details</h4>
+<ul>
+  <li>Profile form: name, email, mobile, date of birth. Call existing <code>PUT /profile</code>. Password change with confirmation.</li>
+  <li>Forgot password screen from login. Call <code>POST /forgot-password</code>. Then reset screen with 6-digit OTP + new password (<code>POST /reset-password</code>).</li>
+  <li>Send OTP by email (or SMS) — today it only logs. Without this, reset is not usable in production.</li>
+  <li>Register may later collect mobile (API already allows it).</li>
+</ul>
+<p><strong>APIs.</strong> Already exist. Add mail/SMS. Do not invent new auth endpoints unless needed.</p>
+<p><strong>Screens.</strong> Customer profile, admin profile, forgot, reset.</p>
+<p><strong>Done when.</strong> A real user can change name, request OTP, set a new password, and sign in again.</p>
+</div>
+
+<div class="keep">
+<h3>Step 2 — Catalog (occasions + templates) from the database <span class="badge next">Do next with Step 3</span></h3>
+<p><strong>Goal.</strong> Home, gallery, and create-flow read occasions/templates from the API. Admin can add or edit them later.</p>
+<h4>Details</h4>
+<ul>
+  <li>Tables: occasions, templates (name, occasion, description, cover, premium flag, config JSON for rooms/fields).</li>
+  <li>Seed the four live occasions: Birthday, Anniversary, Raksha Bandhan, Bhai Phota.</li>
+  <li>Seed the eight gallery templates (see section 6). Mark Midnight Toast as the first with a full experience config.</li>
+  <li>Public GET endpoints. Admin POST/PUT later in Step 7 if needed.</li>
+  <li>Frontend: <code>catalog.service.ts</code> already has getOccasions / getTemplates — switch from mock files to these APIs.</li>
+</ul>
+<p><strong>Done when.</strong> Changing a template in the database changes the website gallery without a frontend code edit.</p>
+</div>
+
+<div class="keep">
+<h3>Step 3 — Create a wish (the editor) <span class="badge next">Core product · do next</span></h3>
+<p><strong>Goal.</strong> After occasion + template, the customer fills the keepsake and saves a <strong>draft</strong>.</p>
+<p>This is the original “do not build yet” item from day one. It is now the main remaining work.</p>
+<h4>Details</h4>
+<ul>
+  <li>Keep Step 1 of create-project (occasion → template). Add Step 2: editor.</li>
+  <li>Fields (from the original brief): recipient name, titles, messages/letter, images, videos, music, plus template-specific rooms (for Midnight Toast: letter, stories, moments, privacy, gift).</li>
+  <li>Uploads go to storage (S3 or local disk first). Save URLs on the project.</li>
+  <li>Autosave draft. List on My Projects and Overview.</li>
+  <li>Preview: open the wish player with draft data (not the public token yet).</li>
+  <li>Do one template fully: <strong>Midnight Toast</strong>. Other templates can show “editor coming” until Step 8.</li>
+</ul>
+<p><strong>APIs (new).</strong></p>
+<ul>
+  <li><code>POST /projects</code> — create draft (template_id, occasion).</li>
+  <li><code>GET /projects</code> — customer’s list.</li>
+  <li><code>GET /projects/{id}</code> — one project + content.</li>
+  <li><code>PUT /projects/{id}</code> — save editor fields.</li>
+  <li><code>POST /projects/{id}/media</code> — upload photo/video/audio.</li>
+</ul>
+<p><strong>Screens.</strong> Create flow, editor, My Projects (real rows), Overview counts.</p>
+<p><strong>Done when.</strong> A logged-in customer can pick Midnight Toast, add Riya’s name, a letter, photos and a song, save, leave, come back, and still see it.</p>
+</div>
+
+<div class="keep">
+<h3>Step 4 — Publish, token, time window, password, schedule <span class="badge wait">After editor</span></h3>
+<p><strong>Goal.</strong> A draft becomes a live private wish the recipient can open.</p>
+<h4>Details</h4>
+<ul>
+  <li>Publish generates a random <strong>22-character</strong> token. URL: <code>wishme.liwaas.com/w/{token}</code>.</li>
+  <li><strong>Wishing date/time</strong> is stored. Link is valid for <strong>72 hours after that moment</strong> (already the frontend rule). Expired → closed screen.</li>
+  <li>Invalid token → closed screen.</li>
+  <li>Optional <strong>password</strong> (Signature feature). Recipient types it before the gate.</li>
+  <li><strong>Scheduled unlock</strong>: publish now but gate stays closed until wishing datetime.</li>
+  <li>Statuses: draft · scheduled · published · expired.</li>
+  <li><code>WishExperiencePage</code> loads project by token from API, not <code>demoWishes.ts</code>.</li>
+</ul>
+<p><strong>APIs (new).</strong></p>
+<ul>
+  <li><code>POST /projects/{id}/publish</code> — body: wished_at, ttl_hours (default 72), password optional.</li>
+  <li><code>GET /w/{token}</code> public — returns content if open; 404/410 if invalid/expired; 401 if password required.</li>
+  <li>Unpublish / extend later if needed.</li>
+</ul>
+<p><strong>Done when.</strong> Customer publishes; recipient opens the real link on a phone and sees that customer’s photos and letter. After 72 hours the same link is closed.</p>
+</div>
+
+<div class="keep">
+<h3>Step 5 — Share pack (link + QR) <span class="badge wait">After publish</span></h3>
+<p><strong>Goal.</strong> Customer can copy the link and download a QR card to print or send.</p>
+<ul>
+  <li>On the project page after publish: copy link, download QR (PNG/PDF), optional password reminder.</li>
+  <li>QR encodes the full URL. Style: navy/gold, WISHME wordmark, recipient first name.</li>
+  <li>Promised on Signature in the pricing copy — still show copy-link on free if you allow free publish of core templates.</li>
+</ul>
+<p><strong>Done when.</strong> Scanning the QR on a phone opens the live wish.</p>
+</div>
+
+<div class="keep">
+<h3>Step 6 — Payments (Razorpay) <span class="badge wait">After a wish can publish</span></h3>
+<p><strong>Goal.</strong> Money matches the three plans. Premium templates cannot publish unpaid.</p>
+<table>
+  <thead><tr><th>Plan</th><th>Price</th><th>Intent</th></tr></thead>
+  <tbody>
+    <tr><td>Keepsake</td><td>Free</td><td>Core templates, names, letter, private link, reopen.</td></tr>
+    <tr><td>Signature</td><td>₹299 one-time</td><td>Premium template, photos/video/music, password, QR card.</td></tr>
+    <tr><td>WishMe+</td><td>₹499 / year</td><td>Everything in Signature, multiple wishes a year, new occasions first.</td></tr>
+  </tbody>
+</table>
+<ul>
+  <li>Razorpay order + verify webhook. Store payment on user/project.</li>
+  <li>Billing page: current plan, invoices, upgrade. Replace “nothing is charged in this phase”.</li>
+  <li>Gate: publishing Midnight Toast (premium) requires Signature or WishMe+.</li>
+</ul>
+<p><strong>Done when.</strong> Test payment in Razorpay test mode unlocks publish; failed payment does not.</p>
+</div>
+
+<div class="keep">
+<h3>Step 7 — Live admin studio <span class="badge wait">Needs real customers + wishes</span></h3>
+<p><strong>Goal.</strong> Admin sees real people and real wishes, not dummy cards.</p>
+<ul>
+  <li>Replace <code>admin.service.ts</code> dummy lists with APIs: customers, wishes, stats.</li>
+  <li>Filters: active/inactive, plan, status, date.</li>
+  <li>Open a wish as admin (support) without breaking privacy for normal users.</li>
+  <li>Optional: create admin users, disable a customer, take a wish down.</li>
+  <li>Use existing role middleware. Never show admin routes to customers.</li>
+</ul>
+<p><strong>Done when.</strong> After a test customer publishes, the wish appears on <code>/admin/wishes</code> with the right name and status.</p>
+</div>
+
+<div class="keep">
+<h3>Step 8 — More recipient templates <span class="badge wait">One complete template at a time</span></h3>
+<p><strong>Goal.</strong> Same depth as Midnight Toast, not only a gallery thumbnail.</p>
+<p><strong>Order (after Midnight Toast is fully editable + publishable):</strong></p>
+<ol>
+  <li>Golden Hour (birthday, free/core)</li>
+  <li>Still Us (anniversary, premium)</li>
+  <li>First Light (anniversary, core)</li>
+  <li>Sacred Thread (Raksha Bandhan, core)</li>
+  <li>Rakhi Atelier (Raksha Bandhan, premium)</li>
+  <li>Phota Bloom (Bhai Phota, core)</li>
+  <li>Tilak Gold (Bhai Phota, premium)</li>
+  <li>Then new occasions: Valentine’s Day, Mother’s Day, Father’s Day, custom</li>
+</ol>
+<p>Each template: rooms/stories that last <strong>at least 2–3 minutes</strong>, mobile first, then desktop. Reuse the wish shell; change data and art direction.</p>
+<p><strong>Done when.</strong> At least one core + one premium template per current occasion can be created, published, and opened.</p>
+</div>
+
+<div class="keep">
+<h3>Step 9 — Launch polish <span class="badge wait">Last</span></h3>
+<ul>
+  <li>Seed a real admin user in production (not a demo card on the login page).</li>
+  <li>Confirm frontend <code>VITE_API_BASE_URL</code> points at api-wishme.liwaas.com.</li>
+  <li>CORS already allows wishme.liwaas.com and localhost.</li>
+  <li>End-to-end on a real phone: register → create Midnight Toast → pay (if premium) → publish → open link / QR.</li>
+  <li>Support page + email hello@liwaas.com still correct.</li>
+  <li>Privacy: unique link, no index of wishes on the public site, 72-hour default.</li>
+  <li>Queues for OTP mail, video processing, QR generation if those get slow.</li>
+</ul>
+<p><strong>Done when.</strong> You can send one real wish to one real person for a real occasion.</p>
+</div>
+
+<h2>5. What to do next (this week)</h2>
+<ol>
+  <li><strong>Step 2</strong> — Laravel occasions + templates tables, seed current mock data, GET APIs, point <code>catalog.service.ts</code> at them.</li>
+  <li><strong>Step 3</strong> — Projects table + draft APIs. Midnight Toast editor (name, letter, photos, song at minimum). Save and reload.</li>
+  <li>Only then <strong>Step 4</strong> — publish token and make <code>/w/{token}</code> read that project.</li>
+</ol>
+<p>Step 1 (profile edit / OTP email) can be a short parallel if you want accounts complete, but it does not unlock the product. Do not start Razorpay or new templates before a saved Midnight Toast can be published.</p>
+
+<h2>6. Occasions and templates inventory</h2>
+<h3>Occasions on the site now</h3>
+<table>
+  <thead><tr><th>Occasion</th><th>Tagline</th></tr></thead>
+  <tbody>
+    <tr><td>Birthday</td><td>A year, held with care</td></tr>
+    <tr><td>Anniversary</td><td>For the story you still share</td></tr>
+    <tr><td>Raksha Bandhan</td><td>A thread, made digital</td></tr>
+    <tr><td>Bhai Phota</td><td>Blessing, light, and love</td></tr>
+  </tbody>
+</table>
+<p class="small">Named in the original brief, not in the gallery yet: Valentine’s Day, Mother’s Day, Father’s Day, other custom celebrations.</p>
+<h3>Templates on the site now</h3>
+<table>
+  <thead><tr><th>Template</th><th>Occasion</th><th>Plan</th><th>Recipient experience</th></tr></thead>
+  <tbody>
+    <tr><td>Golden Hour</td><td>Birthday</td><td>Core</td><td>Gallery only</td></tr>
+    <tr><td>Midnight Toast</td><td>Birthday</td><td>Premium</td><td><strong>Complete</strong> (demo content)</td></tr>
+    <tr><td>Still Us</td><td>Anniversary</td><td>Premium</td><td>Gallery only</td></tr>
+    <tr><td>First Light</td><td>Anniversary</td><td>Core</td><td>Gallery only</td></tr>
+    <tr><td>Sacred Thread</td><td>Raksha Bandhan</td><td>Core</td><td>Gallery only</td></tr>
+    <tr><td>Rakhi Atelier</td><td>Raksha Bandhan</td><td>Premium</td><td>Gallery only</td></tr>
+    <tr><td>Phota Bloom</td><td>Bhai Phota</td><td>Core</td><td>Gallery only</td></tr>
+    <tr><td>Tilak Gold</td><td>Bhai Phota</td><td>Premium</td><td>Gallery only</td></tr>
+  </tbody>
+</table>
+
+<h2>7. Routes (current)</h2>
+<table>
+  <thead><tr><th>Path</th><th>Audience</th></tr></thead>
+  <tbody>
+    <tr><td>/ · /templates · /templates/:id · /pricing · /support</td><td>Public</td></tr>
+    <tr><td>/login · /register · /admin/login</td><td>Guests</td></tr>
+    <tr><td>/dashboard · /projects · /projects/create · /dashboard/templates · /dashboard/billing · /dashboard/profile</td><td>Customer</td></tr>
+    <tr><td>/admin · /admin/customers · /admin/wishes · /admin/profile</td><td>Admin</td></tr>
+    <tr><td>/w/:token (22 characters)</td><td>Recipient</td></tr>
+  </tbody>
+</table>
+
+<h2>8. Design and build rules (do not drop these)</h2>
+<ul>
+  <li>Emotional, premium, clean. White/cream, navy text, gold accent. Soft shadows, rounded cards. Mobile first.</li>
+  <li>TypeScript, no <code>any</code>. Small reusable components. Mock/API data in services, not copied into every page.</li>
+  <li>Do not add libraries without need. Payments = Razorpay only when Step 6 starts.</li>
+  <li>Recipient page must work on a phone. Aim for 2–3 minutes of real content per template.</li>
+  <li>Private unique link — not a public feed of wishes.</li>
+  <li>Log every create/move/update in <code>PROJECT_UPDATES.txt</code>.</li>
+</ul>
+
+<h2>9. Original first-phase “do not build yet” — status</h2>
+<table>
+  <thead><tr><th>Held back on day one</th><th>Now</th></tr></thead>
+  <tbody>
+    <tr><td>Real authentication</td><td>Done (login/register/logout/profile). Edit + OTP UI still open.</td></tr>
+    <tr><td>Backend APIs</td><td>Auth only. Everything else still to build.</td></tr>
+    <tr><td>Editor</td><td><strong>Next core step.</strong></td></tr>
+    <tr><td>Publishing, token, QR, privacy, schedule, expiry</td><td>Token/72h proven on demo wish only. Rest after editor.</td></tr>
+    <tr><td>Razorpay / subscriptions</td><td>Copy and prices exist. No charge yet.</td></tr>
+  </tbody>
+</table>
+
+<p class="footer note">WISHME · Project Plan · 6 September 2026 · Internal · by LIWAAS. This file is the master plan. File changes go in PROJECT_UPDATES.txt. Update this plan when a step is finished or the order changes.</p>
+
+</body>
+</html>

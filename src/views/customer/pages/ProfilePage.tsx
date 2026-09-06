@@ -1,7 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { getProfile } from '@/services/auth.service.ts'
-import { isDemoToken } from '@/shared/data/demoAccounts.ts'
 import { queryKeys } from '@/services/queryKeys.ts'
 import { Button } from '@/shared/components/ui/Button.tsx'
 import { Card } from '@/shared/components/ui/Card.tsx'
@@ -11,13 +10,11 @@ import { ROUTES } from '@/shared/constants/routes.ts'
 import { useAuth } from '@/shared/hooks/useAuth.ts'
 
 export function ProfilePage() {
-  const { user, token, logout } = useAuth()
+  const { user, logout } = useAuth()
   const navigate = useNavigate()
-  const demo = isDemoToken(token)
   const profileQuery = useQuery({
     queryKey: queryKeys.profile,
-    queryFn: () => getProfile(token, user),
-    enabled: !demo,
+    queryFn: getProfile,
   })
   const profile = profileQuery.data?.user ?? user
 
@@ -35,13 +32,7 @@ export function ProfilePage() {
           <Input label="Mobile" value={profile?.mobile_no ?? '—'} readOnly />
           <Input label="Date of birth" value={profile?.dob ?? '—'} readOnly />
           <Input label="Role" value={profile?.role ?? 'customer'} readOnly />
-          {demo ? (
-            <p className="text-sm text-navy-muted">
-              Demo customer. Sign in with these details anytime while the studio is in preview.
-            </p>
-          ) : (
-            <p className="text-sm text-navy-muted">Profile editing will come in a later step.</p>
-          )}
+          <p className="text-sm text-navy-muted">Profile editing will come in a later step.</p>
           <Button
             variant="secondary"
             onClick={() => {

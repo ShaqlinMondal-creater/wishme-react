@@ -25,7 +25,7 @@ export function useAuth() {
 
   const logout = async () => {
     try {
-      await logoutRequest(token)
+      await logoutRequest()
     } catch {
       // Local session is cleared even if the API is unreachable.
     } finally {
@@ -34,7 +34,7 @@ export function useAuth() {
   }
 
   const refreshProfile = async () => {
-    const payload = await getProfile(token, user)
+    const payload = await getProfile()
     if (token) {
       setSession(payload.user, token)
     }

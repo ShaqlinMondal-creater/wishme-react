@@ -3,8 +3,6 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { ApiError, firstFieldError, getApiErrorMessage } from '@/services/http.ts'
 import loginImage from '@/assets/auth/login.png'
 import { AuthPanel } from '@/views/auth/components/AuthPanel.tsx'
-import { DemoCredentialsCard } from '@/views/auth/components/DemoCredentialsCard.tsx'
-import { DEMO_ADMIN } from '@/shared/data/demoAccounts.ts'
 import { Button } from '@/shared/components/ui/Button.tsx'
 import { Input } from '@/shared/components/ui/Input.tsx'
 import { homePathForRole, ROUTES } from '@/shared/constants/routes.ts'
@@ -64,9 +62,9 @@ export function AdminLoginPage() {
       imageAlt="A handwritten letter, gold seal and cream roses"
       panelEyebrow="WISHME studio"
       panelQuote="The quiet side of the house."
-      eyebrow="Staff"
+      eyebrow="Admin"
       title="Admin sign in"
-      description="Demo details are ready. This panel is for WishMe, not for the person making a wish."
+      description="This panel is for WishMe admins, not for the person making a wish."
       footer={
         <p className="text-sm text-navy-muted">
           Making a wish?{' '}
@@ -100,14 +98,6 @@ export function AdminLoginPage() {
           Enter studio
         </Button>
       </form>
-      <DemoCredentialsCard
-        email={DEMO_ADMIN.email}
-        password={DEMO_ADMIN.password}
-        onFill={() => {
-          setEmail(DEMO_ADMIN.email)
-          setPassword(DEMO_ADMIN.password)
-        }}
-      />
     </AuthPanel>
   )
 }
