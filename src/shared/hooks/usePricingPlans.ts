@@ -1,10 +1,10 @@
 import { useQuery } from '@tanstack/react-query'
-import { queryKeys } from '@/shared/api/queryKeys.ts'
-import { fetchPricingPlans } from '@/shared/api/wishme.ts'
+import { getPricingPlans } from '@/services/catalog.service.ts'
+import { queryKeys } from '@/services/queryKeys.ts'
 
 export function usePricingPlans() {
   return useQuery({
     queryKey: queryKeys.pricing,
-    queryFn: fetchPricingPlans,
+    queryFn: getPricingPlans,
   })
 }

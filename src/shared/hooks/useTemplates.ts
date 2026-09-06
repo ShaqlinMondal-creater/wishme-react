@@ -1,10 +1,10 @@
 import { useQuery } from '@tanstack/react-query'
-import { queryKeys } from '@/shared/api/queryKeys.ts'
-import { fetchTemplates } from '@/shared/api/wishme.ts'
+import { getTemplates } from '@/services/catalog.service.ts'
+import { queryKeys } from '@/services/queryKeys.ts'
 
 export function useTemplates() {
   return useQuery({
     queryKey: queryKeys.templates,
-    queryFn: fetchTemplates,
+    queryFn: getTemplates,
   })
 }

@@ -1,0 +1,99 @@
+WISHME — PROJECT UPDATES
+========================
+This file lives inside the frontend project: wishme-react/PROJECT_UPDATES.txt
+
+It is the running log of every create / move / update from 6 Sep 2026
+until the end of the project. Newest entries go at the TOP of the LOG section.
+
+Do not skip this file. If a file is added, moved, renamed, or its job changes,
+write it here in the same session.
+
+
+HOW TO READ THE FRONTEND (src/)
+-------------------------------
+Open the folder that matches the screen you are working on.
+
+  app/          App start only: providers + router.
+  views/        Screens, split by who sees them.
+    public/     Website: home, templates, pricing, support.
+    auth/       Sign in / register (customer + admin login).
+    customer/   Logged-in customer dashboard and profile.
+    admin/      Staff studio: customers, wishes, admin profile.
+    wish/       Recipient share page (/w/:token). Full-screen experience.
+  services/     All data access. Views and hooks call services, not raw API.
+    http.ts             fetch wrapper
+    auth.service.ts     login, register, logout, profile
+    catalog.service.ts  occasions, templates, pricing
+    projects.service.ts customer projects
+    admin.service.ts    admin demo lists
+  shared/       Reuse only (used by more than one view).
+    components/ui       Button, Input, Card, Modal
+    components/common   Logo, cards, empty/loading states
+    components/layout   PageContainer, MobileTabBar
+    hooks               useAuth, useProjects, useTemplates, ...
+    store               auth + UI state
+    data                demo / static data until the API is live
+    constants, types, lib
+  assets/       Images
+  styles/       Global CSS
+
+Reuse shortcuts (index files):
+  import { Button, Input, Card } from '@/shared/components/ui'
+  import { useAuth, useProjects } from '@/shared/hooks'
+  import { login, getProjects } from '@/services'
+
+
+LOG
+---
+
+[2026-09-06] Moved this log into the frontend project
+  Why: the first copy sat at the WishMe workspace root, outside wishme-react.
+  Moved
+    ../PROJECT_UPDATES.txt -> wishme-react/PROJECT_UPDATES.txt
+
+[2026-09-06] Frontend folder restructure (no visual change)
+  Why: features + mixed shared folders were hard to follow. Public, auth,
+  customer and admin screens now live in separate view folders. API calls
+  now go through a services layer.
+
+  Created
+    src/views/public|auth|customer|admin|wish
+    src/services/http.ts (moved from shared/api/client.ts)
+    src/services/types.ts
+    src/services/queryKeys.ts
+    src/services/auth.service.ts
+    src/services/catalog.service.ts
+    src/services/projects.service.ts
+    src/services/admin.service.ts
+    src/services/index.ts
+    src/shared/components/ui/index.ts
+    src/shared/components/common/index.ts
+    src/shared/components/layout/index.ts
+    src/shared/hooks/index.ts
+    PROJECT_UPDATES.txt (this file)
+
+  Moved (same UI, new home)
+    features/marketing/*          -> views/public/*
+    features/auth/pages+components -> views/auth/*
+    features/admin/pages/AdminLoginPage.tsx -> views/auth/pages/AdminLoginPage.tsx
+    features/dashboard/*          -> views/customer/*
+    features/admin/*              -> views/admin/*
+    features/wish/*               -> views/wish/*
+    shared/layout/PublicLayout, Navbar, Footer -> views/public/layout/
+    shared/layout/AuthLayout      -> views/auth/layout/
+    shared/layout/DashboardLayout -> views/customer/layout/
+    shared/layout/PageContainer, MobileTabBar -> shared/components/layout/
+    features/auth/hooks/useAuth.ts -> shared/hooks/useAuth.ts
+    features/auth/store/authStore.ts -> shared/store/authStore.ts
+    features/auth/data/demoAccounts.ts -> shared/data/demoAccounts.ts
+    features/admin/data/demoAdmin.ts -> shared/data/demoAdmin.ts
+
+  Removed
+    src/features/   (empty after the move)
+    src/shared/api/
+    src/shared/layout/
+
+  Behaviour
+    Screens look the same. Demo logins still work:
+      Customer  arjun@wishme.demo / WishMe123
+      Admin     admin@wishme.demo / Admin123!

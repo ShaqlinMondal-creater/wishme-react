@@ -1,0 +1,7 @@
+export { apiClient, ApiError, firstFieldError, getApiErrorMessage } from '@/services/http.ts'
+export type { ApiEnvelope, ApiErrorBag, AuthPayload, ProfilePayload } from '@/services/types.ts'
+export { queryKeys } from '@/services/queryKeys.ts'
+export { getProfile, login, logout, register } from '@/services/auth.service.ts'
+export { getOccasions, getPricingPlans, getTemplates } from '@/services/catalog.service.ts'
+export { getProjects } from '@/services/projects.service.ts'
+export { getAdminCustomers, getAdminStats, getAdminWishes } from '@/services/admin.service.ts'
