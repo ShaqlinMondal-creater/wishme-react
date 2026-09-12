@@ -20,10 +20,7 @@ export function PricingPreviewSection() {
         </div>
         <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {pricingPlans.map((plan) => (
-            <Card
-              key={plan.id}
-              className={cn(plan.highlighted && 'border-gold bg-navy text-white shadow-lift')}
-            >
+            <Card key={plan.id} tone={plan.highlighted ? 'navy' : 'light'}>
               <p className={cn('text-sm tracking-wide', plan.highlighted ? 'text-gold' : 'text-gold-deep')}>
                 {plan.name}
               </p>

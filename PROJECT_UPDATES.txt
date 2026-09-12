@@ -18,18 +18,19 @@ Open the folder that matches the screen you are working on.
     public/     Website: home, templates, pricing, support.
     auth/       Sign in / register (customer + admin login).
     customer/   Logged-in customer dashboard and profile.
-    admin/      Admin studio: customers, wishes, admin profile.
+    admin/      Admin studio: users, accounts, coupons, bills, plans, templates.
     wish/       Recipient share page (/w/:token). Full-screen experience.
   services/     All data access. Views and hooks call services, not raw API.
     http.ts             fetch wrapper
     auth.service.ts     login, register, logout, profile
     catalog.service.ts  occasions, templates, pricing
     projects.service.ts customer projects
-    admin.service.ts    admin demo lists
+    uploads.service.ts template + project media files
+    admin.service.ts    live users + remaining admin demo lists
   shared/       Reuse only (used by more than one view).
     components/ui       Button, Input, Card, Modal
     components/common   Logo, cards, empty/loading states
-    components/layout   PageContainer, MobileTabBar
+    components/layout   PageContainer, MobileTabBar, AppTopBar
     hooks               useAuth, useProjects, useTemplates, ...
     store               auth + UI state
     data                demo / static data until the API is live
@@ -45,6 +46,448 @@ Reuse shortcuts (index files):
 
 LOG
 ---
+
+[2026-09-12] Drop leftover MySQL foreign keys
+  Why: 2026_09_12_110000 and 123000 already ran on the server with foreign keys. Laravel will not re-run those files after they were edited. This new migration drops the remaining keys so relations stay on the models only.
+  Created
+    api-wishme/database/migrations/2026_09_12_134500_drop_wishme_foreign_keys.php
+
+[2026-09-12] Relations live on models, not database foreign keys
+  Why: WishMe links (occasion, cover, thumbnail, user, template, project, purchase) should be Eloquent belongsTo/hasMany only. Migrations keep the id columns and indexes, drop any existing MySQL foreign keys, and do not recreate them.
+  Updated
+    api-wishme/database/migrations/2026_09_12_110000_rename_wishme_tables_and_add_occasions.php
+    api-wishme/database/migrations/2026_09_12_123000_add_cover_id_to_templates.php
+    api-wishme/database/migrations/2026_09_10_180200_create_purchases_table.php
+    api-wishme/database/migrations/2026_09_10_180300_create_projects_table.php
+    api-wishme/database/migrations/2026_09_10_200000_create_uploads_table.php
+    api-wishme/app/Models/UploadsModel.php
+
+[2026-09-12] Template demo uses that template’s cover
+  Why: Preview still filled gate, hub, and rooms with Midnight Toast photos when Detail content was empty. Non-midnight templates now use the catalogue cover from the database (or the bundled slug image) until a custom cover is saved.
+  Updated
+    wishme-react/src/views/wish/content/mergeContent.ts
+    wishme-react/src/views/wish/pages/TemplateDemoPage.tsx
+    wishme-react/src/views/admin/pages/AdminTemplateContentPage.tsx
+    wishme-react/src/views/customer/pages/CreateProjectPage.tsx
+    wishme-react/src/views/customer/pages/CustomerProjectContentPage.tsx
+    wishme-react/src/shared/types/project.ts
+    api-wishme/app/Models/ProjectsModel.php
+    api-wishme/app/Http/Controllers/ProjectsController.php
+
+[2026-09-12] Catalogue demo for every template
+  Why: Preview only played Midnight Toast from a hardcoded token. Every template now opens /demo/{slug}, loads GET /templates/{slug}, and plays that row’s content, rooms, name, and occasion. Empty content still fills from the Midnight Toast engine defaults. Old /w/demo-token redirects to /demo/midnight-toast.
+  Created
+    wishme-react/src/views/wish/pages/TemplateDemoPage.tsx
+  Updated
+    wishme-react/src/shared/constants/routes.ts
+    wishme-react/src/app/router/AppRouter.tsx
+    wishme-react/src/views/wish/pages/WishExperiencePage.tsx
+    wishme-react/src/views/wish/data/demoWishes.ts
+    wishme-react/src/views/wish/content/mergeContent.ts
+    wishme-react/src/views/wish/components/WishContentStudio.tsx
+    wishme-react/src/views/public/pages/TemplateDetailPage.tsx
+
+[2026-09-12] Detail hub follows template room switches
+  Why: Opening Detail still showed Letter, Stories, Moments, Privacy, Surprise Gift even when the template only had Letter, Moments, Privacy. Hub, editor, and live player now hide rooms whose has_* flag is off. Counter and default copy use the visible count.
+  Updated
+    wishme-react/src/shared/lib/templateDisplay.ts
+    wishme-react/src/views/wish/components/WishHub.tsx
+    wishme-react/src/views/wish/components/WishShell.tsx
+    wishme-react/src/views/wish/components/WishContentStudio.tsx
+    wishme-react/src/views/wish/content/WishEditorContext.tsx
+    wishme-react/src/views/wish/content/defaultContent.ts
+    wishme-react/src/views/wish/content/mergeContent.ts
+    wishme-react/src/views/admin/pages/AdminTemplateContentPage.tsx
+    wishme-react/src/views/customer/pages/CustomerProjectContentPage.tsx
+    wishme-react/src/views/wish/pages/WishExperiencePage.tsx
+    wishme-react/src/shared/types/project.ts
+    api-wishme/app/Models/ProjectsModel.php
+
+[2026-09-12] Template bulk-create from JSON
+  Why: Occasions already had Create from JSON. Templates now do too: POST /admin/templates/bulk-create reads database/data/templates.json, links each row to t_occasion by type, copies database/data/templates/{slug}.png into t_uploads, sets cover_id. Idempotent by slug. Admin Templates page has the same button.
+  Created
+    api-wishme/database/data/templates.json
+    api-wishme/app/Services/TemplateBulkCreate.php
+  Updated
+    api-wishme/app/Http/Controllers/TemplatesController.php
+    api-wishme/routes/api.php
+    wishme-react/src/services/admin.service.ts
+    wishme-react/src/views/admin/pages/AdminTemplatesPage.tsx
+
+[2026-09-12] Drop templates.cover text column
+  Why: Catalogue picture is cover_id → t_uploads only, like occasion thumbnail_id. Room letter/stories/moments/privacy/gift stay in templates.content JSON. API still returns cover as the upload URL.
+  Updated
+    api-wishme/database/migrations/2026_09_12_123000_add_cover_id_to_templates.php
+    api-wishme/app/Models/TemplatesModel.php
+    api-wishme/app/Http/Controllers/TemplatesController.php
+    api-wishme/app/Services/StoreUpload.php
+    api-wishme/app/Http/Requests/Concerns/ValidatesTemplatePayload.php
+    wishme-react/src/shared/types/template.ts
+    wishme-react/src/shared/lib/templateDisplay.ts
+
+
+[2026-09-12] Template default covers
+  Why: Same as occasions. Selecting a slug shows a default cover. Create/update copies the PNG into t_uploads and sets cover_id + cover URL. Admin form previews instead of a filename field.
+  Created
+    api-wishme/database/data/templates/*.png
+    api-wishme/database/migrations/2026_09_12_123000_add_cover_id_to_templates.php
+  Updated
+    api-wishme/app/Models/TemplatesModel.php
+    api-wishme/app/Services/StoreUpload.php
+    api-wishme/app/Http/Controllers/TemplatesController.php
+    api-wishme/routes/api.php
+    wishme-react/src/shared/lib/templateDisplay.ts
+    wishme-react/src/views/admin/pages/AdminTemplatesPage.tsx
+    wishme-react/src/services/uploads.service.ts
+    wishme-react/src/services/admin.service.ts
+
+
+[2026-09-12] Occasion default images
+  Why: Selecting a type must show a picture. Bulk-create and create copy default PNGs into t_uploads. Form previews the type default until a file is chosen.
+  Created
+    api-wishme/database/data/occasions/*.png
+  Updated
+    api-wishme/database/data/occasions.json
+    api-wishme/app/Services/OccasionBulkCreate.php
+    api-wishme/app/Services/StoreUpload.php
+    api-wishme/app/Http/Controllers/OccasionsController.php
+    wishme-react/src/shared/lib/occasionDisplay.ts
+    wishme-react/src/views/admin/pages/AdminTemplateSettingsPage.tsx
+
+
+[2026-09-12] Occasion bulk-create from JSON
+  Why: Migration must not insert occasion rows. Admin hits POST /admin/occasions/bulk-create (occasionBulkCreate) which reads database/data/occasions.json.
+  Created
+    api-wishme/database/data/occasions.json
+    api-wishme/app/Services/OccasionBulkCreate.php
+  Updated
+    api-wishme/database/migrations/2026_09_12_110000_rename_wishme_tables_and_add_occasions.php
+    api-wishme/app/Http/Controllers/OccasionsController.php
+    api-wishme/routes/api.php
+    wishme-react/src/services/admin.service.ts
+    wishme-react/src/views/admin/pages/AdminTemplateSettingsPage.tsx
+
+
+[2026-09-12] Occasions APIs + t_ table names
+  Why: Admin owns occasions (create/update/delete/view). Templates use occasion_id. WishMe tables renamed t_occasion, t_templates, t_projects, t_uploads, t_purchases. users stays users.
+  Created
+    api-wishme/app/Enums/OccasionType.php
+    api-wishme/app/Models/OccasionsModel.php
+    api-wishme/app/Http/Controllers/OccasionsController.php
+    api-wishme/app/Http/Requests/StoreOccasionRequest.php
+    api-wishme/app/Http/Requests/StoreOccasionUploadRequest.php
+    api-wishme/database/migrations/2026_09_12_110000_rename_wishme_tables_and_add_occasions.php
+    wishme-react/src/shared/lib/occasionDisplay.ts
+  Updated
+    api-wishme/routes/api.php
+    api-wishme/app/Models/TemplatesModel.php
+    api-wishme/app/Models/ProjectsModel.php
+    api-wishme/app/Models/PurchasesModel.php
+    api-wishme/app/Models/UploadsModel.php
+    api-wishme/app/Services/StoreUpload.php
+    api-wishme/app/Http/Controllers/TemplatesController.php
+    wishme-react/src/services/catalog.service.ts
+    wishme-react/src/services/admin.service.ts
+    wishme-react/src/views/admin/pages/AdminTemplateSettingsPage.tsx
+  Removed
+    wishme-react/src/shared/data/occasions.ts
+
+
+[2026-09-10] Keep alt-php84 handler in public/.htaccess
+  Why: Backend is always https://api-wishme.liwaas.com. MultiPHP is already 8.4. git checkout of .htaccess removed the cPanel handler, so LiteSpeed served 8.2. Frontend tests: localhost:5173 → vercel → wishme.liwaas.com. Never artisan serve.
+  Created
+    .cursor/rules/wishme-workflow.mdc
+  Updated
+    api-wishme/public/.htaccess
+    wishme-react/src/services/http.ts
+
+
+[2026-09-10] Login “cannot reach API” was PHP 8.2
+  Why: LiteSpeed web PHP is 8.2. Composer needs >= 8.4.1, so login 500s as HTML with no CORS. DEV no longer says artisan serve when using the live API.
+  Updated
+    wishme-react/src/services/http.ts
+
+
+[2026-09-10] No PUT anywhere
+  Why: LiteSpeed on cPanel blocks PUT. All updates are POST.
+  Updated
+    api-wishme/routes/api.php
+    api-wishme/public/.htaccess
+    wishme-react/src/services/projects.service.ts
+    wishme-react/src/services/admin.service.ts
+    wishme-react/docs/WISHME-Project-Plan.html
+
+
+[2026-09-10] cPanel PUT 403 + finfo crash
+  Why: LiteSpeed blocked PUT (Save looked offline). Flysystem still used PHP finfo to write files. Writes go to public/uploads with copy(). Updates use POST.
+  Updated
+    api-wishme/app/Services/StoreUpload.php
+    api-wishme/routes/api.php
+    api-wishme/public/.htaccess
+    wishme-react/src/services/projects.service.ts
+    wishme-react/src/services/admin.service.ts
+
+
+[2026-09-10] Uploads without php_fileinfo
+  Why: cPanel PHP has no fileinfo. Validation and $file->store() both asked Symfony to guess MIME and crashed. Save by extension only.
+  Updated
+    api-wishme/app/Http/Requests/StoreUploadRequest.php
+    api-wishme/app/Services/StoreUpload.php
+    api-wishme/app/Models/UploadsModel.php
+
+
+[2026-09-10] Customer panel editor + project uploads
+  Why: the customer should edit the same lookalike wish. Files go in uploads with project_id. Buying stays later, so a draft can be created without a purchase.
+  Created
+    api-wishme/database/migrations/2026_09_10_210000_make_projects_purchase_id_nullable.php
+    wishme-react/src/views/wish/components/WishContentStudio.tsx
+    wishme-react/src/views/customer/pages/CustomerProjectContentPage.tsx
+  Updated
+    api-wishme/app/Http/Requests/StoreProjectRequest.php — purchase optional
+    api-wishme/app/Http/Requests/Concerns/ValidatesProjectContent.php — same JSON as templates
+    api-wishme/app/Http/Controllers/ProjectsController.php
+    api-wishme/app/Models/ProjectsModel.php
+    wishme-react/src/services/projects.service.ts — live API
+    wishme-react/src/views/customer/pages/CreateProjectPage.tsx
+    wishme-react/src/views/customer/pages/ProjectsPage.tsx
+    wishme-react/src/views/customer/pages/OverviewPage.tsx
+    wishme-react/src/app/router/AppRouter.tsx
+
+
+[2026-09-10] Admin Detail reads and writes the uploads table
+  Why: a pencil file must become an uploads row, then the wish must use that file URL. The same modal can later point at a customer project.
+  Updated
+    wishme-react/src/views/admin/components/ContentEditModal.tsx — template or project owner
+    wishme-react/src/views/admin/pages/AdminTemplateContentPage.tsx — files from GET uploads
+    wishme-react/src/services/queryKeys.ts
+    wishme-react/src/shared/types/index.ts
+
+
+[2026-09-10] uploads table for template and project media
+  Why: files were only on disk. Admin and later customer editors both need a row per image, video, or audio.
+  Created
+    api-wishme/database/migrations/2026_09_10_200000_create_uploads_table.php
+    api-wishme/app/Enums/UploadKind.php
+    api-wishme/app/Models/UploadsModel.php
+    api-wishme/app/Http/Requests/StoreUploadRequest.php
+    api-wishme/app/Services/StoreUpload.php
+    wishme-react/src/shared/types/upload.ts
+    wishme-react/src/services/uploads.service.ts
+  Updated
+    api-wishme/routes/api.php — GET/POST template uploads, GET/POST project media
+    api-wishme/app/Http/Controllers/TemplatesController.php — write uploads row
+    api-wishme/app/Http/Controllers/ProjectsController.php — customer media
+    api-wishme/app/Models/TemplatesModel.php
+    api-wishme/app/Models/ProjectsModel.php
+    api-wishme/app/Models/UsersModel.php
+    wishme-react/src/services/admin.service.ts
+    wishme-react/src/views/admin/components/ContentEditModal.tsx — audio too
+    wishme-react/src/views/wish/components/WishMedia.tsx
+
+
+[2026-09-10] Admin Detail editor for template rooms
+  Why: the product form only saved name/price/rooms. Each landing and room still has text, images, and video that admin must change in a lookalike of the live wish.
+  Created
+    api-wishme/database/migrations/2026_09_10_190000_add_content_to_templates_table.php
+    api-wishme/app/Http/Requests/UpdateTemplateContentRequest.php
+    api-wishme/public/uploads/.gitignore
+    wishme-react/src/shared/types/templateContent.ts
+    wishme-react/src/views/wish/content/builtinMedia.ts
+    wishme-react/src/views/wish/content/defaultContent.ts
+    wishme-react/src/views/wish/content/mergeContent.ts
+    wishme-react/src/views/wish/content/WishEditorContext.tsx
+    wishme-react/src/views/wish/components/WishMedia.tsx
+    wishme-react/src/views/wish/components/EditPencil.tsx
+    wishme-react/src/views/admin/components/ContentEditModal.tsx
+    wishme-react/src/views/admin/pages/AdminTemplateContentPage.tsx
+  Updated
+    api-wishme/app/Models/TemplatesModel.php — JSON content
+    api-wishme/app/Http/Controllers/TemplatesController.php — admin show, save content, upload media
+    api-wishme/routes/api.php — GET /admin/templates/{id}, PUT content, POST media
+    api-wishme/config/filesystems.php — uploads disk under public/uploads
+    wishme-react/src/services/http.ts — FormData uploads
+    wishme-react/src/services/admin.service.ts — fetch one template, content, media
+    wishme-react/src/views/admin/pages/AdminTemplatesPage.tsx — Detail
+    wishme-react/src/app/router/AppRouter.tsx — /admin/templates/:id/content
+    wishme-react/src/views/wish/components/WishShell.tsx
+    wishme-react/src/views/wish/components/WishHub.tsx
+    wishme-react/src/views/wish/components/WishLetterRoom.tsx
+    wishme-react/src/views/wish/components/WishPlayer.tsx
+    wishme-react/src/views/wish/components/WishMomentsRoom.tsx
+    wishme-react/src/views/wish/components/WishPrivacyRoom.tsx
+    wishme-react/src/views/wish/components/WishGiftRoom.tsx
+    wishme-react/src/views/wish/pages/WishExperiencePage.tsx — preview reads saved template JSON
+
+
+[2026-09-10] Template APIs + live admin/public catalogue
+  Why: buying comes last. First the catalogue must be real: admin saves a template, the site reads it.
+  Created
+    api-wishme/app/Http/Controllers/TemplatesController.php
+    api-wishme/app/Http/Requests/StoreTemplateRequest.php
+    api-wishme/app/Http/Requests/UpdateTemplateRequest.php
+    api-wishme/app/Http/Requests/Concerns/ValidatesTemplatePayload.php
+    wishme-react/src/shared/hooks/useAdminTemplates.ts
+    wishme-react/src/shared/lib/templateDisplay.ts
+  Updated
+    api-wishme/routes/api.php — GET /templates, admin template CRUD
+    api-wishme/app/Models/TemplatesModel.php — occasion + price lists
+    wishme-react/src/shared/types/template.ts — live product fields
+    wishme-react/src/services/catalog.service.ts — GET /templates
+    wishme-react/src/services/admin.service.ts — admin template CRUD
+    wishme-react/src/views/admin/pages/AdminTemplatesPage.tsx — add/edit/delete
+    wishme-react/src/views/public/pages/TemplatesPage.tsx
+    wishme-react/src/views/public/pages/TemplateDetailPage.tsx
+    wishme-react/src/views/public/components/TemplatesSection.tsx
+    wishme-react/src/views/customer/pages/DashboardTemplatesPage.tsx
+    wishme-react/src/views/customer/pages/CreateProjectPage.tsx
+    wishme-react/src/shared/components/common/TemplateCard.tsx
+    wishme-react/src/shared/constants/routes.ts — slug midnight-toast
+
+
+[2026-09-10] Removed template seeder
+  Why: cPanel is the live database. Admin creates templates there. No seed.
+  Deleted
+    api-wishme/database/seeders/TemplatesSeeder.php
+  Updated
+    api-wishme/database/seeders/DatabaseSeeder.php — empty again
+
+[2026-09-10] Users role enum, templates/purchases/projects, project validation
+  Why: role must be a real enum (admin|customer); templates are products; a paid purchase unlocks a project; project content can only include rooms the template has on.
+  Created
+    api-wishme/app/Enums/UserRole.php
+    api-wishme/app/Enums/ProjectStatus.php
+    api-wishme/app/Enums/PurchaseStatus.php
+    api-wishme/database/migrations/2026_09_10_180000_change_users_role_to_enum.php
+    api-wishme/database/migrations/2026_09_10_180100_create_templates_table.php
+    api-wishme/database/migrations/2026_09_10_180200_create_purchases_table.php
+    api-wishme/database/migrations/2026_09_10_180300_create_projects_table.php
+    api-wishme/app/Models/TemplatesModel.php
+    api-wishme/app/Models/PurchasesModel.php
+    api-wishme/app/Models/ProjectsModel.php
+    api-wishme/app/Http/Requests/ApiFormRequest.php
+    api-wishme/app/Http/Requests/StoreProjectRequest.php
+    api-wishme/app/Http/Requests/UpdateProjectRequest.php
+    api-wishme/app/Http/Requests/Concerns/ValidatesProjectContent.php
+    api-wishme/app/Http/Controllers/ProjectsController.php
+  Updated
+    api-wishme/app/Models/UsersModel.php — role casts to UserRole
+    api-wishme/app/Http/Middleware/RoleMiddleware.php
+    api-wishme/app/Http/Controllers/AuthController.php
+    api-wishme/app/Http/Controllers/UsersController.php
+    api-wishme/routes/api.php — customer project CRUD
+
+
+[2026-09-07] Admin nav order, Logs, and account dropdown
+  Why: profile/sign out belong in a name menu; sidebar needed a Settings group and Logs.
+  Created
+    wishme-react/src/views/admin/pages/AdminLogsPage.tsx
+  Updated
+    wishme-react/src/shared/components/layout/AppTopBar.tsx — click name for Profile / Sign out
+    wishme-react/src/views/admin/components/AdminSidebar.tsx
+    wishme-react/src/shared/constants/routes.ts — /admin/logs
+    wishme-react/src/app/router/AppRouter.tsx
+
+[2026-09-07] Move profile to top bar; add sidebar icons
+  Why: name/email at the bottom of the sidebar felt buried. Clients expect a top bar and icon nav.
+  Created
+    wishme-react/src/shared/components/layout/AppTopBar.tsx
+    wishme-react/src/shared/lib/initials.ts
+  Updated
+    wishme-react/src/views/admin/layout/AdminLayout.tsx
+    wishme-react/src/views/admin/components/AdminSidebar.tsx
+    wishme-react/src/views/customer/layout/DashboardLayout.tsx
+    wishme-react/src/views/customer/components/Sidebar.tsx
+
+[2026-09-07] Fix featured plan card colors
+  Why: Card always used bg-white, so Signature's light text sat on white and vanished.
+  Updated
+    wishme-react/src/shared/components/ui/Card.tsx — tone light | navy
+    wishme-react/src/views/admin/pages/AdminPlansPage.tsx
+    wishme-react/src/views/public/pages/PricingPage.tsx
+    wishme-react/src/views/public/components/PricingPreviewSection.tsx
+
+[2026-09-07] Admin Plans as pricing cards with edit
+  Why: plans should look like a professional pricing grid, with a pencil on each card.
+  Updated
+    wishme-react/src/views/admin/pages/AdminPlansPage.tsx
+
+[2026-09-07] Split admin Templates, Template Settings, and Plans
+  Why: the catalogue is Templates; Template Settings is occasions/rules; Plans was missing.
+  Created
+    wishme-react/src/views/admin/pages/AdminTemplatesPage.tsx
+    wishme-react/src/views/admin/pages/AdminPlansPage.tsx
+  Updated
+    wishme-react/src/views/admin/pages/AdminTemplateSettingsPage.tsx — occasions, not the template list
+    wishme-react/src/views/admin/components/AdminSidebar.tsx — Plans, Templates, Template Settings
+    wishme-react/src/shared/constants/routes.ts
+    wishme-react/src/app/router/AppRouter.tsx
+
+[2026-09-07] Show templates in admin Template Settings
+  Why: admin had a placeholder; the catalogue belongs on that sidebar item.
+  Updated
+    wishme-react/src/views/admin/pages/AdminTemplateSettingsPage.tsx — live template table
+    wishme-react/src/app/router/AppRouter.tsx — /admin/templates redirects here
+
+[2026-09-07] Admin sidebar: Accounts, Coupons, Bills, Template Settings
+  Why: studio nav needed those modules instead of Templates / Subscription plans / Profile.
+  Created
+    wishme-react/src/views/admin/components/AdminComingSoonPage.tsx
+    wishme-react/src/views/admin/pages/AdminAccountsPage.tsx
+    wishme-react/src/views/admin/pages/AdminCouponsPage.tsx
+    wishme-react/src/views/admin/pages/AdminBillsPage.tsx
+    wishme-react/src/views/admin/pages/AdminTemplateSettingsPage.tsx
+  Updated
+    wishme-react/src/views/admin/components/AdminSidebar.tsx
+    wishme-react/src/shared/constants/routes.ts
+    wishme-react/src/app/router/AppRouter.tsx
+
+[2026-09-07] Admin Users table with search and pagination
+  Why: the people screen needed every account in a table, not a customer card list.
+  Moved
+    wishme-react/src/views/admin/pages/AdminCustomersPage.tsx
+      -> wishme-react/src/views/admin/pages/AdminUsersPage.tsx
+  Updated
+    api-wishme/app/Http/Controllers/UsersController.php — search, status, limit, offset
+    wishme-react/src/services/admin.service.ts — query params + total
+    wishme-react/src/shared/hooks/useAdminUsers.ts
+    wishme-react/src/shared/constants/routes.ts — /admin/users
+    wishme-react/src/views/admin/components/AdminSidebar.tsx — Users
+    wishme-react/src/views/admin/pages/AdminOverviewPage.tsx — live user total
+    wishme-react/src/app/router/AppRouter.tsx — /admin/customers redirects to /admin/users
+
+[2026-09-07] Rename AdminUsersController to UsersController
+  Why: Laravel resource controllers should be named for the resource, not the caller.
+  Moved
+    api-wishme/app/Http/Controllers/AdminUsersController.php
+      -> api-wishme/app/Http/Controllers/UsersController.php
+  Updated
+    api-wishme/routes/api.php — UsersController on GET/PUT/DELETE /api/admin/users
+
+[2026-09-07] Admin user APIs + customers panel
+  Why: admin studio needs live people management before the rest of the
+  product loop. Dummy customer lists were not enough.
+  Created
+    api-wishme/app/Http/Controllers/AdminUsersController.php
+    wishme-react/src/shared/hooks/useAdminUsers.ts
+  Updated
+    api-wishme/routes/api.php — GET/PUT/DELETE /api/admin/users
+    api-wishme/app/Models/UsersModel.php — created_at on toApiArray()
+    wishme-react/src/services/admin.service.ts — fetch/update/delete users
+    wishme-react/src/views/admin/pages/AdminCustomersPage.tsx — list, edit, delete
+    wishme-react/src/views/admin/pages/AdminOverviewPage.tsx — live customer count
+
+[2026-09-07] Allow Vercel frontend to call the live API
+  Why: https://wishme-react.vercel.app/login failed with a network error.
+  The API was up, but CORS only allowed wishme.liwaas.com, so the browser
+  blocked login and showed "Cannot reach the WISHME API".
+  Updated
+    api-wishme/config/cors.php — allow wishme-react.vercel.app
+    wishme-react/src/services/http.ts — production error copy (no artisan serve)
+
+[2026-09-06] Cleared backend demo user seeder
+  Why: demo login accounts are not needed. Register + real API login only.
+  Updated
+    api-wishme/database/seeders/DatabaseSeeder.php (empty; Laravel still needs this file)
 
 [2026-09-06] Added full project-plan PDF
   Why: one document with motive, where we stand, every step to launch, and what to do next.

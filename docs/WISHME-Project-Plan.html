@@ -169,7 +169,7 @@
     <tr><td>POST</td><td>/login</td><td>No</td><td>Customer + admin login</td><td>Wired. Body includes <code>role</code> so admin cannot use customer login and vice versa.</td></tr>
     <tr><td>POST</td><td>/logout</td><td>Bearer</td><td>Sign out</td><td>Wired.</td></tr>
     <tr><td>GET</td><td>/profile</td><td>Bearer</td><td>Customer profile</td><td>Wired, read-only UI.</td></tr>
-    <tr><td>PUT</td><td>/profile</td><td>Bearer</td><td>Not used</td><td>API ready. UI later.</td></tr>
+    <tr><td>POST</td><td>/profile</td><td>Bearer</td><td>Not used</td><td>API ready. UI later.</td></tr>
     <tr><td>POST</td><td>/forgot-password</td><td>No</td><td>Not used</td><td>API ready. OTP is only written to the server log — not emailed/SMS yet.</td></tr>
     <tr><td>POST</td><td>/reset-password</td><td>No</td><td>Not used</td><td>API ready. No screen.</td></tr>
   </tbody>
@@ -220,7 +220,7 @@
 <p><strong>Goal.</strong> A customer can edit profile and recover a password. An admin can do the same.</p>
 <h4>Details</h4>
 <ul>
-  <li>Profile form: name, email, mobile, date of birth. Call existing <code>PUT /profile</code>. Password change with confirmation.</li>
+  <li>Profile form: name, email, mobile, date of birth. Call existing <code>POST /profile</code>. Password change with confirmation.</li>
   <li>Forgot password screen from login. Call <code>POST /forgot-password</code>. Then reset screen with 6-digit OTP + new password (<code>POST /reset-password</code>).</li>
   <li>Send OTP by email (or SMS) — today it only logs. Without this, reset is not usable in production.</li>
   <li>Register may later collect mobile (API already allows it).</li>
@@ -238,7 +238,7 @@
   <li>Tables: occasions, templates (name, occasion, description, cover, premium flag, config JSON for rooms/fields).</li>
   <li>Seed the four live occasions: Birthday, Anniversary, Raksha Bandhan, Bhai Phota.</li>
   <li>Seed the eight gallery templates (see section 6). Mark Midnight Toast as the first with a full experience config.</li>
-  <li>Public GET endpoints. Admin POST/PUT later in Step 7 if needed.</li>
+  <li>Public GET endpoints. Admin POST later in Step 7 if needed.</li>
   <li>Frontend: <code>catalog.service.ts</code> already has getOccasions / getTemplates — switch from mock files to these APIs.</li>
 </ul>
 <p><strong>Done when.</strong> Changing a template in the database changes the website gallery without a frontend code edit.</p>
@@ -262,7 +262,7 @@
   <li><code>POST /projects</code> — create draft (template_id, occasion).</li>
   <li><code>GET /projects</code> — customer’s list.</li>
   <li><code>GET /projects/{id}</code> — one project + content.</li>
-  <li><code>PUT /projects/{id}</code> — save editor fields.</li>
+  <li><code>POST /projects/{id}</code> — save editor fields.</li>
   <li><code>POST /projects/{id}/media</code> — upload photo/video/audio.</li>
 </ul>
 <p><strong>Screens.</strong> Create flow, editor, My Projects (real rows), Overview counts.</p>

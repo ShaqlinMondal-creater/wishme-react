@@ -3,7 +3,7 @@ import { EmptyState } from '@/shared/components/common/EmptyState.tsx'
 import { LoadingState } from '@/shared/components/common/LoadingState.tsx'
 import { Card } from '@/shared/components/ui/Card.tsx'
 import { getButtonClasses } from '@/shared/components/ui/buttonStyles.ts'
-import { ROUTES } from '@/shared/constants/routes.ts'
+import { ROUTES, projectContentPath } from '@/shared/constants/routes.ts'
 import { useAuth } from '@/shared/hooks/useAuth.ts'
 import { useProjects } from '@/shared/hooks/useProjects.ts'
 import { formatDate } from '@/shared/lib/formatDate.ts'
@@ -50,7 +50,7 @@ export function OverviewPage() {
         <EmptyState
           className="mt-6"
           title="No wishes yet"
-          description="Create your first personalized digital wish. The editor will arrive in a later phase."
+          description="Create your first personalized digital wish, then edit every room."
           actionLabel="Create a wish"
           onAction={() => navigate(ROUTES.createProject)}
         />
@@ -61,11 +61,14 @@ export function OverviewPage() {
               <div>
                 <p className="font-medium text-navy">{project.title}</p>
                 <p className="mt-1 text-sm text-navy-muted">
-                  For {project.recipientName} · {project.occasion.replaceAll('-', ' ')} · updated{' '}
-                  {formatDate(project.updatedAt)}
+                  For {project.recipient_name}
+                  {project.occasion ? ` · ${project.occasion.replaceAll('-', ' ')}` : ''} · updated{' '}
+                  {formatDate(project.updated_at ?? '')}
                 </p>
               </div>
-              <span className="text-xs tracking-[0.18em] text-gold-deep uppercase">{project.status}</span>
+              <Link to={projectContentPath(project.id)} className="text-sm text-gold-deep hover:text-navy">
+                Edit
+              </Link>
             </Card>
           ))}
         </div>

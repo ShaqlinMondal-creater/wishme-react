@@ -8,4 +8,5 @@ export type User = {
   auth_provider: string
   is_active: boolean
   is_loggedin: boolean
+  created_at?: string | null
 }

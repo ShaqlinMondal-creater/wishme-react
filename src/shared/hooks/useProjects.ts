@@ -9,5 +9,6 @@ export function useProjects() {
   return useQuery({
     queryKey: [...queryKeys.projects, token],
     queryFn: getProjects,
+    enabled: Boolean(token),
   })
 }

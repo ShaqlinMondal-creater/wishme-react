@@ -1,8 +1,8 @@
-import { Outlet } from 'react-router-dom'
-import { Logo } from '@/shared/components/common/Logo.tsx'
-import { AdminSidebar } from '@/views/admin/components/AdminSidebar.tsx'
-import { ROUTES } from '@/shared/constants/routes.ts'
 import { useState } from 'react'
+import { Outlet } from 'react-router-dom'
+import { AdminSidebar } from '@/views/admin/components/AdminSidebar.tsx'
+import { AppTopBar } from '@/shared/components/layout/AppTopBar.tsx'
+import { ROUTES } from '@/shared/constants/routes.ts'
 
 export function AdminLayout() {
   const [open, setOpen] = useState(false)
@@ -23,16 +23,7 @@ export function AdminLayout() {
       ) : null}
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex items-center justify-between gap-3 border-b border-line bg-white px-4 py-3 sm:px-6 lg:hidden">
-          <Logo compact to={ROUTES.admin} />
-          <button
-            type="button"
-            onClick={() => setOpen(true)}
-            className="inline-flex h-10 items-center rounded-full border border-line px-4 text-sm text-navy"
-          >
-            Menu
-          </button>
-        </header>
+        <AppTopBar profileTo={ROUTES.adminProfile} onMenu={() => setOpen(true)} />
         <main className="flex-1 px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
           <Outlet />
         </main>

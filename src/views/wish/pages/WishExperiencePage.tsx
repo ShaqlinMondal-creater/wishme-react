@@ -1,13 +1,18 @@
 import { useEffect } from 'react'
-import { useParams } from 'react-router-dom'
+import { Navigate, useParams } from 'react-router-dom'
 import { WishClosed, WishShell } from '@/views/wish/components/WishShell.tsx'
 import { getDemoWish } from '@/views/wish/data/demoWishes.ts'
 import '@/views/wish/styles/wish-experience.css'
-import { isWishStillOpen, isWishTokenFormat } from '@/shared/constants/routes.ts'
+import {
+  demoPath,
+  isWishStillOpen,
+  isWishTokenFormat,
+  MIDNIGHT_TOAST_DEMO_TOKEN,
+  MIDNIGHT_TOAST_SLUG,
+} from '@/shared/constants/routes.ts'
 
 export function WishExperiencePage() {
   const { token = '' } = useParams()
-  const wish = getDemoWish(token)
 
   useEffect(() => {
     const previous = document.body.style.overflow
@@ -16,6 +21,12 @@ export function WishExperiencePage() {
       document.body.style.overflow = previous
     }
   }, [])
+
+  if (token === MIDNIGHT_TOAST_DEMO_TOKEN) {
+    return <Navigate to={demoPath(MIDNIGHT_TOAST_SLUG)} replace />
+  }
+
+  const wish = getDemoWish(token)
 
   if (!isWishTokenFormat(token) || !wish) {
     return <WishClosed reason="invalid" />

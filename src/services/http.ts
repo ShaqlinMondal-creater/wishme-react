@@ -64,7 +64,7 @@ export function getApiErrorMessage(error: unknown): string {
   }
 
   if (error instanceof TypeError) {
-    return 'Cannot reach the WISHME API. Start api-wishme with php artisan serve.'
+    return 'Cannot reach the WISHME API at https://api-wishme.liwaas.com.'
   }
 
   if (error instanceof Error) {
@@ -77,6 +77,7 @@ export function getApiErrorMessage(error: unknown): string {
 export async function apiClient<T>(path: string, options: RequestOptions = {}): Promise<T> {
   const { body, headers, ...rest } = options
   const token = useAuthStore.getState().token
+  const isFormData = typeof FormData !== 'undefined' && body instanceof FormData
 
   let response: Response
 
@@ -86,11 +87,11 @@ export async function apiClient<T>(path: string, options: RequestOptions = {}): 
       credentials: 'omit',
       headers: {
         Accept: 'application/json',
-        ...(body !== undefined ? { 'Content-Type': 'application/json' } : {}),
+        ...(body !== undefined && !isFormData ? { 'Content-Type': 'application/json' } : {}),
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
         ...headers,
       },
-      body: body !== undefined ? JSON.stringify(body) : undefined,
+      body: body === undefined ? undefined : isFormData ? (body as FormData) : JSON.stringify(body),
     })
   } catch (error) {
     throw error instanceof TypeError ? new ApiError(getApiErrorMessage(error), 0) : error

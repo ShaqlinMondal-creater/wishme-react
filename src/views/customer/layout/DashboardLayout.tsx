@@ -1,10 +1,10 @@
 import { useEffect } from 'react'
 import { Outlet } from 'react-router-dom'
-import { Logo } from '@/shared/components/common/Logo.tsx'
 import { Sidebar } from '@/views/customer/components/Sidebar.tsx'
+import { AppTopBar } from '@/shared/components/layout/AppTopBar.tsx'
 import { MobileTabBar } from '@/shared/components/layout/MobileTabBar.tsx'
+import { ROUTES } from '@/shared/constants/routes.ts'
 import { useUiStore } from '@/shared/store/uiStore.ts'
-import { cn } from '@/shared/lib/cn.ts'
 
 export function DashboardLayout() {
   const isMobileSidebarOpen = useUiStore((state) => state.isMobileSidebarOpen)
@@ -40,18 +40,7 @@ export function DashboardLayout() {
       ) : null}
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex items-center justify-between gap-3 border-b border-line px-4 py-3 sm:px-6 lg:hidden">
-          <Logo compact />
-          <button
-            type="button"
-            onClick={toggleMobileSidebar}
-            className={cn(
-              'inline-flex h-10 items-center rounded-full border border-line px-4 text-sm text-navy',
-            )}
-          >
-            Menu
-          </button>
-        </header>
+        <AppTopBar profileTo={ROUTES.profile} onMenu={toggleMobileSidebar} />
         <main className="flex-1 px-4 py-6 pb-24 sm:px-6 sm:py-8 lg:px-8 lg:pb-8">
           <Outlet />
         </main>

@@ -2,7 +2,11 @@ import { useCallback, useEffect, useRef, useState, type PointerEvent } from 'rea
 import { EmojiReactions } from '@/views/wish/components/EmojiReactions.tsx'
 import { StoryProgress } from '@/views/wish/components/StoryProgress.tsx'
 import { WishSlide } from '@/views/wish/components/WishSlide.tsx'
+import { RoomFrame } from '@/views/wish/components/RoomFrame.tsx'
+import { WishMedia } from '@/views/wish/components/WishMedia.tsx'
+import { EditPencil } from '@/views/wish/components/EditPencil.tsx'
 import type { DemoWish } from '@/views/wish/data/demoWishes.ts'
+import { useWishEditor } from '@/views/wish/content/WishEditorContext.tsx'
 
 type WishPlayerProps = {
   wish: DemoWish
@@ -12,6 +16,7 @@ type WishPlayerProps = {
 const HOLD_MS = 420
 
 export function WishPlayer({ wish, onBack }: WishPlayerProps) {
+  const editor = useWishEditor()
   const [index, setIndex] = useState(0)
   const [paused, setPaused] = useState(false)
   const [ended, setEnded] = useState(false)
@@ -140,6 +145,56 @@ export function WishPlayer({ wish, onBack }: WishPlayerProps) {
       setPaused(false)
     }
     didHoldRef.current = false
+  }
+
+  if (editor?.enabled) {
+    const slides = editor.content.rooms.stories.slides
+
+    return (
+      <RoomFrame kicker="Status" title="Stories" onBack={onBack}>
+        <p className="mb-4 text-sm text-gold-soft">Each story slide has a pencil. Change the image, title, or line.</p>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {slides.map((slideItem, slideIndex) => (
+            <article key={slideItem.id} className="relative min-h-[14rem] overflow-hidden rounded-[1.2rem]">
+              <WishMedia src={slideItem.image} className="absolute inset-0 h-full w-full object-cover" />
+              <EditPencil
+                label="Story image"
+                onClick={() => editor.onEdit(`rooms.stories.slides.${slideIndex}.image`, 'Story image', 'media')}
+              />
+              <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/30 to-transparent" />
+              <div className="relative flex h-full min-h-[14rem] flex-col justify-end p-4">
+                <p className="text-[10px] tracking-[0.2em] text-gold uppercase">{slideItem.kicker}</p>
+                <p className="mt-1 font-display text-2xl text-white">{slideItem.title}</p>
+                <p className="mt-1 text-sm text-gold-soft">{slideItem.subtitle}</p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  <button
+                    type="button"
+                    className="rounded-full bg-gold px-2 py-0.5 text-[10px] text-navy"
+                    onClick={() => editor.onEdit(`rooms.stories.slides.${slideIndex}.kicker`, 'Story kicker', 'text')}
+                  >
+                    Kicker
+                  </button>
+                  <button
+                    type="button"
+                    className="rounded-full bg-gold px-2 py-0.5 text-[10px] text-navy"
+                    onClick={() => editor.onEdit(`rooms.stories.slides.${slideIndex}.title`, 'Story title', 'text')}
+                  >
+                    Title
+                  </button>
+                  <button
+                    type="button"
+                    className="rounded-full bg-gold px-2 py-0.5 text-[10px] text-navy"
+                    onClick={() => editor.onEdit(`rooms.stories.slides.${slideIndex}.subtitle`, 'Story subtitle', 'text')}
+                  >
+                    Line
+                  </button>
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+      </RoomFrame>
+    )
   }
 
   return (

@@ -1,9 +1,13 @@
 import { OccasionCard } from '@/shared/components/common/OccasionCard.tsx'
+import { EmptyState } from '@/shared/components/common/EmptyState.tsx'
+import { LoadingState } from '@/shared/components/common/LoadingState.tsx'
 import { PageContainer } from '@/shared/components/layout/PageContainer.tsx'
 import { ROUTES } from '@/shared/constants/routes.ts'
-import { occasions } from '@/shared/data/occasions.ts'
+import { useOccasions } from '@/shared/hooks/useOccasions.ts'
 
 export function OccasionsSection() {
+  const { data: occasions, isLoading } = useOccasions()
+
   return (
     <section className="bg-white">
       <PageContainer width="wide" className="py-14 sm:py-20">
@@ -15,15 +19,25 @@ export function OccasionsSection() {
             their name.
           </p>
         </div>
-        <div className="mt-10 grid gap-5 sm:grid-cols-2">
-          {occasions.map((occasion) => (
-            <OccasionCard
-              key={occasion.id}
-              occasion={occasion}
-              to={`${ROUTES.templates}?occasion=${occasion.slug}`}
-            />
-          ))}
-        </div>
+        {isLoading ? (
+          <LoadingState label="Loading occasions…" />
+        ) : !occasions || occasions.length === 0 ? (
+          <EmptyState
+            className="mt-10"
+            title="Occasions coming"
+            description="They appear here after an admin adds them."
+          />
+        ) : (
+          <div className="mt-10 grid gap-5 sm:grid-cols-2">
+            {occasions.map((occasion) => (
+              <OccasionCard
+                key={occasion.id}
+                occasion={occasion}
+                to={`${ROUTES.templates}?occasion=${occasion.type}`}
+              />
+            ))}
+          </div>
+        )}
       </PageContainer>
     </section>
   )

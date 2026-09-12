@@ -1,18 +1,19 @@
 import { useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
+import { EmptyState } from '@/shared/components/common/EmptyState.tsx'
 import { LoadingState } from '@/shared/components/common/LoadingState.tsx'
 import { TemplateCard } from '@/shared/components/common/TemplateCard.tsx'
 import { PageContainer } from '@/shared/components/layout/PageContainer.tsx'
 import { templateOpenTarget } from '@/shared/constants/routes.ts'
+import { getApiErrorMessage } from '@/services/http.ts'
 import { useOccasions } from '@/shared/hooks/useOccasions.ts'
 import { useTemplates } from '@/shared/hooks/useTemplates.ts'
-import type { OccasionSlug } from '@/shared/types/occasion.ts'
 import { cn } from '@/shared/lib/cn.ts'
 
 export function TemplatesPage() {
   const [params, setParams] = useSearchParams()
   const { data: occasions } = useOccasions()
-  const { data: templates, isLoading } = useTemplates()
+  const { data: templates, isLoading, isError, error, refetch } = useTemplates()
   const selected = params.get('occasion')
 
   const filtered = useMemo(() => {
@@ -24,15 +25,15 @@ export function TemplatesPage() {
       return templates
     }
 
-    return templates.filter((template) => template.occasion === selected)
+    return templates.filter((template) => template.occasion?.type === selected)
   }, [selected, templates])
 
-  const setOccasion = (slug: OccasionSlug | 'all') => {
+  const setOccasion = (type: string | 'all') => {
     const next = new URLSearchParams(params)
-    if (slug === 'all') {
+    if (type === 'all') {
       next.delete('occasion')
     } else {
-      next.set('occasion', slug)
+      next.set('occasion', type)
     }
     setParams(next)
   }
@@ -62,23 +63,37 @@ export function TemplatesPage() {
             <button
               key={occasion.id}
               type="button"
-              onClick={() => setOccasion(occasion.slug)}
+              onClick={() => setOccasion(occasion.type)}
               className={cn(
                 'shrink-0 rounded-full px-4 py-2 text-sm capitalize',
-                selected === occasion.slug ? 'bg-navy text-white' : 'bg-white text-navy-muted',
+                selected === occasion.type ? 'bg-navy text-white' : 'bg-white text-navy-muted',
               )}
             >
-              {occasion.name}
+              {occasion.title}
             </button>
           ))}
         </div>
 
         {isLoading ? (
           <LoadingState label="Loading templates…" />
+        ) : isError ? (
+          <EmptyState
+            className="mt-10"
+            title="Could not load templates"
+            description={getApiErrorMessage(error)}
+            actionLabel="Try again"
+            onAction={() => void refetch()}
+          />
+        ) : filtered.length === 0 ? (
+          <EmptyState
+            className="mt-10"
+            title="No templates yet"
+            description="Templates appear here after they are added in Admin."
+          />
         ) : (
           <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {filtered.map((template) => {
-              const open = templateOpenTarget(template.id)
+              const open = templateOpenTarget(template.slug)
               return (
                 <TemplateCard
                   key={template.id}

@@ -1,20 +1,24 @@
 import { NavLink } from 'react-router-dom'
+import type { ComponentType } from 'react'
 import { Logo } from '@/shared/components/common/Logo.tsx'
 import { ROUTES } from '@/shared/constants/routes.ts'
-import { useAuth } from '@/shared/hooks/useAuth.ts'
 import { useUiStore } from '@/shared/store/uiStore.ts'
 import { cn } from '@/shared/lib/cn.ts'
 
-const items = [
-  { to: ROUTES.dashboard, label: 'Overview', end: true },
-  { to: ROUTES.projects, label: 'My Projects', end: false },
-  { to: ROUTES.dashboardTemplates, label: 'Templates', end: false },
-  { to: ROUTES.billing, label: 'Billing', end: false },
-  { to: ROUTES.profile, label: 'Profile', end: false },
+const items: {
+  to: string
+  label: string
+  end: boolean
+  icon: ComponentType
+}[] = [
+  { to: ROUTES.dashboard, label: 'Overview', end: true, icon: HomeIcon },
+  { to: ROUTES.projects, label: 'My Projects', end: false, icon: ProjectsIcon },
+  { to: ROUTES.dashboardTemplates, label: 'Templates', end: false, icon: TemplatesIcon },
+  { to: ROUTES.billing, label: 'Billing', end: false, icon: BillingIcon },
+  { to: ROUTES.profile, label: 'Profile', end: false, icon: ProfileIcon },
 ]
 
 export function Sidebar() {
-  const { user, logout } = useAuth()
   const closeMobileSidebar = useUiStore((state) => state.closeMobileSidebar)
 
   return (
@@ -29,31 +33,69 @@ export function Sidebar() {
             onClick={closeMobileSidebar}
             className={({ isActive }) =>
               cn(
-                'rounded-2xl px-4 py-3 text-sm tracking-wide transition-colors',
+                'flex items-center gap-3 rounded-2xl px-4 py-3 text-sm tracking-wide transition-colors',
                 isActive
                   ? 'bg-white text-navy shadow-soft'
                   : 'text-navy-muted hover:bg-white/70 hover:text-navy',
               )
             }
           >
+            <item.icon />
             {item.label}
           </NavLink>
         ))}
       </nav>
-      <div className="rounded-3xl bg-white p-4 shadow-soft">
-        <p className="text-sm font-medium text-navy">{user?.name ?? 'Guest'}</p>
-        <p className="mt-1 truncate text-xs text-navy-muted">{user?.email}</p>
-        <button
-          type="button"
-          onClick={() => {
-            closeMobileSidebar()
-            void logout()
-          }}
-          className="mt-4 text-sm text-gold-deep hover:text-navy"
-        >
-          Sign out
-        </button>
-      </div>
     </aside>
+  )
+}
+
+function iconClass() {
+  return 'h-[1.15rem] w-[1.15rem] shrink-0'
+}
+
+function HomeIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className={iconClass()} fill="none" aria-hidden="true">
+      <path d="M4 11 12 4l8 7v8a1.5 1.5 0 0 1-1.5 1.5H15v-6H9v6H5.5A1.5 1.5 0 0 1 4 19v-8Z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
+    </svg>
+  )
+}
+
+function ProjectsIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className={iconClass()} fill="none" aria-hidden="true">
+      <path d="M4.5 8.5h15v10a1.5 1.5 0 0 1-1.5 1.5H6A1.5 1.5 0 0 1 4.5 18.5v-10Z" stroke="currentColor" strokeWidth="1.6" />
+      <path d="M9 8.5V7a3 3 0 0 1 6 0v1.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+    </svg>
+  )
+}
+
+function TemplatesIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className={iconClass()} fill="none" aria-hidden="true">
+      <rect x="4" y="4" width="6.5" height="6.5" rx="1.4" stroke="currentColor" strokeWidth="1.6" />
+      <rect x="13.5" y="4" width="6.5" height="6.5" rx="1.4" stroke="currentColor" strokeWidth="1.6" />
+      <rect x="4" y="13.5" width="6.5" height="6.5" rx="1.4" stroke="currentColor" strokeWidth="1.6" />
+      <rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.4" stroke="currentColor" strokeWidth="1.6" />
+    </svg>
+  )
+}
+
+function BillingIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className={iconClass()} fill="none" aria-hidden="true">
+      <rect x="3.5" y="6" width="17" height="12" rx="2" stroke="currentColor" strokeWidth="1.6" />
+      <path d="M3.5 10h17" stroke="currentColor" strokeWidth="1.6" />
+      <path d="M8 15h3" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+    </svg>
+  )
+}
+
+function ProfileIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className={iconClass()} fill="none" aria-hidden="true">
+      <circle cx="12" cy="8.5" r="2.8" stroke="currentColor" strokeWidth="1.6" />
+      <path d="M6 19c.8-3.2 3-4.8 6-4.8s5.2 1.6 6 4.8" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+    </svg>
   )
 }

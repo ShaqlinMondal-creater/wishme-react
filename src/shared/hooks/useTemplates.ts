@@ -5,6 +5,6 @@ import { queryKeys } from '@/services/queryKeys.ts'
 export function useTemplates() {
   return useQuery({
     queryKey: queryKeys.templates,
-    queryFn: getTemplates,
+    queryFn: () => getTemplates(),
   })
 }

@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useRef, useState, type PointerEvent } from 'react'
 import { RoomFrame } from '@/views/wish/components/RoomFrame.tsx'
 import { wishGifts } from '@/views/wish/data/midnightToastRooms.ts'
+import { useWishEditor } from '@/views/wish/content/WishEditorContext.tsx'
+import { EditPencil } from '@/views/wish/components/EditPencil.tsx'
 import { cn } from '@/shared/lib/cn.ts'
 
 type WishGiftRoomProps = {
@@ -8,6 +10,9 @@ type WishGiftRoomProps = {
 }
 
 export function WishGiftRoom({ onBack }: WishGiftRoomProps) {
+  const editor = useWishEditor()
+  const gifts = editor?.content.rooms.gifts.items ?? wishGifts
+  const intro = editor?.content.rooms.gifts.intro ?? 'Nine foil tickets. Scratch only one — the rest stay sealed.'
   const [chosenId, setChosenId] = useState<string | null>(null)
   const chosenRef = useRef<string | null>(null)
   const [revealedId, setRevealedId] = useState<string | null>(null)
@@ -22,30 +27,58 @@ export function WishGiftRoom({ onBack }: WishGiftRoomProps) {
   }
 
   return (
-    <RoomFrame kicker="Scratch" title="Surprise Gift" onBack={onBack} scroll={false}>
+    <RoomFrame kicker="Scratch" title={editor?.content.rooms.gifts.title ?? 'Surprise Gift'} onBack={onBack} scroll={false}>
       <div className="flex h-full min-h-0 flex-col px-3 pt-3 pb-[max(0.8rem,env(safe-area-inset-bottom))] sm:px-0 sm:pt-4">
-        <div className="mb-3 flex shrink-0 flex-col gap-1 sm:mb-4 lg:flex-row lg:items-end lg:justify-between">
-          <p className="max-w-xl text-sm leading-6 text-gold-soft">
-            Nine foil tickets. Scratch only one — the rest stay sealed.
-          </p>
-          <p className="text-[11px] tracking-[0.16em] text-white/50 uppercase">
-            {revealedId ? 'This one is yours' : chosenId ? 'Keep scratching this ticket' : 'Choose one'}
-          </p>
+        <div className="relative mb-3 flex shrink-0 flex-col gap-1 sm:mb-4 lg:flex-row lg:items-end lg:justify-between">
+          <p className="max-w-xl text-sm leading-6 text-gold-soft">{intro}</p>
+          {editor?.enabled ? (
+            <EditPencil label="Gift intro" onClick={() => editor.onEdit('rooms.gifts.intro', 'Gift intro', 'textarea')} />
+          ) : (
+            <p className="text-[11px] tracking-[0.16em] text-white/50 uppercase">
+              {revealedId ? 'This one is yours' : chosenId ? 'Keep scratching this ticket' : 'Choose one'}
+            </p>
+          )}
         </div>
         <div className="mx-auto grid min-h-0 w-full max-w-5xl flex-1 grid-cols-3 grid-rows-3 gap-2 sm:gap-3 lg:max-w-6xl lg:gap-4">
-          {wishGifts.map((gift, index) => (
-            <ScratchCard
-              key={gift.id}
-              id={gift.id}
-              number={String(index + 1).padStart(2, '0')}
-              emoji={gift.emoji}
-              title={gift.title}
-              body={gift.body}
-              chosenId={chosenId}
-              revealed={revealedId === gift.id}
-              onClaim={claim}
-              onRevealed={() => setRevealedId(gift.id)}
-            />
+          {gifts.map((gift, index) => (
+            <div key={gift.id} className="relative">
+              <ScratchCard
+                id={gift.id}
+                number={String(index + 1).padStart(2, '0')}
+                emoji={gift.emoji}
+                title={gift.title}
+                body={gift.body}
+                chosenId={editor?.enabled ? gift.id : chosenId}
+                revealed={editor?.enabled ? true : revealedId === gift.id}
+                onClaim={claim}
+                onRevealed={() => setRevealedId(gift.id)}
+              />
+              {editor?.enabled ? (
+                <div className="absolute bottom-1 left-1 z-20 flex gap-1">
+                  <button
+                    type="button"
+                    className="rounded-full bg-gold px-2 py-0.5 text-[10px] text-navy"
+                    onClick={() => editor.onEdit(`rooms.gifts.items.${index}.emoji`, 'Gift emoji', 'text')}
+                  >
+                    Emoji
+                  </button>
+                  <button
+                    type="button"
+                    className="rounded-full bg-gold px-2 py-0.5 text-[10px] text-navy"
+                    onClick={() => editor.onEdit(`rooms.gifts.items.${index}.title`, 'Gift title', 'text')}
+                  >
+                    Title
+                  </button>
+                  <button
+                    type="button"
+                    className="rounded-full bg-gold px-2 py-0.5 text-[10px] text-navy"
+                    onClick={() => editor.onEdit(`rooms.gifts.items.${index}.body`, 'Gift text', 'textarea')}
+                  >
+                    Text
+                  </button>
+                </div>
+              ) : null}
+            </div>
           ))}
         </div>
       </div>

@@ -1,22 +1,38 @@
+import { EmptyState } from '@/shared/components/common/EmptyState.tsx'
 import { LoadingState } from '@/shared/components/common/LoadingState.tsx'
 import { TemplateCard } from '@/shared/components/common/TemplateCard.tsx'
 import { templateOpenTarget } from '@/shared/constants/routes.ts'
+import { getApiErrorMessage } from '@/services/http.ts'
 import { useTemplates } from '@/shared/hooks/useTemplates.ts'
 
 export function DashboardTemplatesPage() {
-  const { data, isLoading } = useTemplates()
+  const { data, isLoading, isError, error, refetch } = useTemplates()
 
   return (
     <div className="mx-auto max-w-5xl">
       <p className="text-xs tracking-[0.22em] text-gold-deep uppercase">Catalogue</p>
       <h1 className="mt-2 font-display text-3xl text-navy sm:text-4xl">Templates</h1>
       <p className="mt-2 text-navy-muted">Start a new wish from any of these foundations.</p>
-      {isLoading || !data ? (
+      {isLoading ? (
         <LoadingState />
+      ) : isError ? (
+        <EmptyState
+          className="mt-8"
+          title="Could not load templates"
+          description={getApiErrorMessage(error)}
+          actionLabel="Try again"
+          onAction={() => void refetch()}
+        />
+      ) : !data || data.length === 0 ? (
+        <EmptyState
+          className="mt-8"
+          title="No templates yet"
+          description="They will appear here after an admin adds them."
+        />
       ) : (
         <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {data.map((template) => {
-            const open = templateOpenTarget(template.id)
+            const open = templateOpenTarget(template.slug)
             return (
               <TemplateCard
                 key={template.id}

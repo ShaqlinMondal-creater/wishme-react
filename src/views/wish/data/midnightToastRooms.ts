@@ -6,8 +6,9 @@ import glasses from '@/assets/wish/midnight/midnight-glasses.png'
 import letter from '@/assets/wish/midnight/midnight-letter.png'
 import sparks from '@/assets/wish/midnight/midnight-sparks.png'
 import terrace from '@/assets/wish/midnight/midnight-terrace.png'
+import type { WishRoomId } from '@/shared/types/templateContent.ts'
 
-export type WishRoomId = 'letter' | 'stories' | 'moments' | 'privacy' | 'gifts'
+export type { WishRoomId }
 
 export const wishRooms: {
   id: WishRoomId
