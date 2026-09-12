@@ -1,6 +1,7 @@
 import { apiClient } from '@/services/http.ts'
 import { uploadTemplateMedia } from '@/services/uploads.service.ts'
 import { demoAdminStats, demoAdminWishes, type DemoWishRow } from '@/shared/data/demoAdmin.ts'
+import type { Coupon, CouponAppliesTo, CouponDiscountType, CouponUse, CouponUseAppliedTo } from '@/shared/types/coupon.ts'
 import type { Occasion, OccasionType } from '@/shared/types/occasion.ts'
 import type { Template } from '@/shared/types/template.ts'
 import type { UploadPayload } from '@/shared/types/upload.ts'
@@ -216,6 +217,119 @@ export async function bulkCreateAdminOccasions(): Promise<OccasionBulkCreatePayl
   return apiClient<OccasionBulkCreatePayload>('/admin/occasions/bulk-create', {
     method: 'POST',
   })
+}
+
+export type CouponInput = {
+  code: string
+  title: string
+  discount_type: CouponDiscountType
+  amount: number
+  applies_to: CouponAppliesTo
+  is_active: boolean
+  starts_at: string | null
+  ends_at: string | null
+  max_uses: number | null
+  max_uses_per_user: number
+}
+
+export type AdminCouponsQuery = {
+  applies_to?: CouponAppliesTo
+  status?: 'active' | 'inactive'
+}
+
+export type AdminCouponsPayload = {
+  coupons: Coupon[]
+}
+
+export type AdminCouponPayload = {
+  coupon: Coupon
+}
+
+export async function fetchAdminCoupons(query: AdminCouponsQuery = {}): Promise<AdminCouponsPayload> {
+  const params = new URLSearchParams()
+
+  if (query.applies_to) {
+    params.set('applies_to', query.applies_to)
+  }
+
+  if (query.status) {
+    params.set('status', query.status)
+  }
+
+  const qs = params.toString()
+
+  return apiClient<AdminCouponsPayload>(`/admin/coupons${qs ? `?${qs}` : ''}`)
+}
+
+export async function createAdminCoupon(input: CouponInput): Promise<AdminCouponPayload> {
+  return apiClient<AdminCouponPayload>('/admin/coupons', {
+    method: 'POST',
+    body: input,
+  })
+}
+
+export async function updateAdminCoupon(id: number, input: CouponInput): Promise<AdminCouponPayload> {
+  return apiClient<AdminCouponPayload>(`/admin/coupons/${id}`, {
+    method: 'POST',
+    body: input,
+  })
+}
+
+export async function deleteAdminCoupon(id: number): Promise<null> {
+  return apiClient<null>(`/admin/coupons/${id}`, { method: 'DELETE' })
+}
+
+export type AdminCouponUsesQuery = {
+  coupon_id?: number
+  applied_to?: CouponUseAppliedTo
+  search?: string
+  used_from?: string
+  used_to?: string
+  limit?: number
+  offset?: number
+}
+
+export type AdminCouponUsesPayload = {
+  uses: CouponUse[]
+  total: number
+  limit: number
+  offset: number
+}
+
+export async function fetchAdminCouponUses(query: AdminCouponUsesQuery = {}): Promise<AdminCouponUsesPayload> {
+  const params = new URLSearchParams()
+
+  if (query.coupon_id != null) {
+    params.set('coupon_id', String(query.coupon_id))
+  }
+
+  if (query.applied_to) {
+    params.set('applied_to', query.applied_to)
+  }
+
+  if (query.search) {
+    params.set('search', query.search)
+  }
+
+  if (query.used_from) {
+    params.set('used_from', query.used_from)
+  }
+
+  if (query.used_to) {
+    params.set('used_to', query.used_to)
+  }
+
+  if (query.limit != null) {
+    params.set('limit', String(query.limit))
+  }
+
+  if (query.offset != null) {
+    params.set('offset', String(query.offset))
+  }
+
+  const qs = params.toString()
+
+  return apiClient<AdminCouponUsesPayload>(`/admin/coupons/uses${qs ? `?${qs}` : ''}`)
 }
 
 export function getAdminStats() {

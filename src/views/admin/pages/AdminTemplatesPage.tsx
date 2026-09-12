@@ -24,7 +24,7 @@ import { cn } from '@/shared/lib/cn.ts'
 import { enabledRoomLabels, formatTemplatePrice, templateCoverSrc, templateDefaultCover, TEMPLATE_ROOM_LABELS } from '@/shared/lib/templateDisplay.ts'
 import { templateOccasionTitle } from '@/shared/lib/occasionDisplay.ts'
 import type { Occasion } from '@/shared/types/occasion.ts'
-import { TEMPLATE_PRICES, type Template } from '@/shared/types/template.ts'
+import { type Template } from '@/shared/types/template.ts'
 import type { ApiErrorBag } from '@/services/types.ts'
 
 export function AdminTemplatesPage() {
@@ -118,98 +118,96 @@ export function AdminTemplatesPage() {
           onAction={() => setEditing('new')}
         />
       ) : (
-        <Card className="mt-6" padding="none">
-          <div className="overflow-x-auto">
-            <table className="min-w-[64rem] w-full text-left text-sm">
-              <thead>
-                <tr className="border-b border-line/80 bg-ivory/70 text-xs tracking-[0.12em] text-navy-muted uppercase">
-                  <th className="px-5 py-3 font-medium">Template</th>
-                  <th className="px-5 py-3 font-medium">Occasion</th>
-                  <th className="px-5 py-3 font-medium">Price</th>
-                  <th className="px-5 py-3 font-medium">Rooms</th>
-                  <th className="px-5 py-3 font-medium">Status</th>
-                  <th className="px-5 py-3 font-medium">
-                    <span className="sr-only">Actions</span>
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {templates.map((template) => {
-                  const preview = templateOpenTarget(template.slug)
+        <div className="mt-8 grid gap-4 lg:grid-cols-2">
+          {templates.map((template) => {
+            const preview = templateOpenTarget(template.slug)
+            const rooms = enabledRoomLabels(template)
 
-                  return (
-                    <tr key={template.id} className="border-b border-line/60 last:border-0">
-                      <td className="px-5 py-3">
-                        <div className="flex items-center gap-3">
-                          <img
-                            src={templateCoverSrc(template)}
-                            alt=""
-                            className="h-12 w-16 rounded-xl object-cover"
-                          />
-                          <div>
-                            <p className="font-medium whitespace-nowrap text-navy">{template.name}</p>
-                            <p className="text-xs text-navy-muted">{template.slug}</p>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-5 py-3 capitalize whitespace-nowrap text-navy-muted">
-                        {templateOccasionTitle(template)}
-                      </td>
-                      <td className="px-5 py-3 whitespace-nowrap text-navy">
-                        {formatTemplatePrice(template.price)}
-                      </td>
-                      <td className="px-5 py-3 text-navy-muted">
-                        {enabledRoomLabels(template).join(', ') || 'None'}
-                      </td>
-                      <td className="px-5 py-3 whitespace-nowrap">
+            return (
+              <Card key={template.id} padding="none" className="overflow-hidden">
+                <div className="flex min-h-[8.5rem]">
+                  <div className="relative w-32 shrink-0 sm:w-40">
+                    <img src={templateCoverSrc(template)} alt="" className="absolute inset-0 h-full w-full object-cover" />
+                    <div className="absolute inset-0 bg-linear-to-r from-transparent to-black/20" />
+                    <div className="absolute top-2 right-2 flex gap-1">
+                      <button
+                        type="button"
+                        aria-label={`Edit ${template.name}`}
+                        className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-white/90 text-navy shadow-soft hover:bg-gold"
+                        onClick={() => setEditing(template)}
+                      >
+                        <PencilIcon />
+                      </button>
+                      <button
+                        type="button"
+                        aria-label={`Delete ${template.name}`}
+                        className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-white/90 text-red-700 shadow-soft hover:bg-red-50"
+                        onClick={() => setRemoving(template)}
+                      >
+                        <TrashIcon />
+                      </button>
+                    </div>
+                  </div>
+                  <div className="flex min-w-0 flex-1 flex-col justify-between px-4 py-3 sm:px-5">
+                    <div>
+                      <div className="flex items-center justify-between gap-2">
+                        <p className="truncate text-[10px] tracking-[0.2em] text-gold-deep uppercase">
+                          {templateOccasionTitle(template)}
+                        </p>
                         <span
                           className={cn(
-                            'rounded-full px-2.5 py-1 text-xs tracking-wide',
+                            'shrink-0 rounded-full px-2 py-0.5 text-[10px] tracking-wide',
                             template.is_active ? 'bg-gold-soft text-navy' : 'bg-ivory text-navy-muted',
                           )}
                         >
                           {template.is_active ? 'Active' : 'Inactive'}
                         </span>
-                      </td>
-                      <td className="px-5 py-3 text-right whitespace-nowrap">
-                        <div className="flex items-center justify-end gap-4">
-                        <Link
-                          to={adminTemplateContentPath(template.id)}
-                          className="text-sm text-gold-deep hover:text-navy"
-                        >
-                          Detail
-                        </Link>
-                        <Link
-                          to={preview.to}
-                          target={preview.openInNewTab ? '_blank' : undefined}
-                          rel={preview.openInNewTab ? 'noopener noreferrer' : undefined}
-                          className="text-sm text-gold-deep hover:text-navy"
-                        >
-                          Preview
-                        </Link>
-                        <button
-                          type="button"
-                          className="text-sm text-navy hover:text-gold-deep"
-                          onClick={() => setEditing(template)}
-                        >
-                          Edit
-                        </button>
-                        <button
-                          type="button"
-                          className="text-sm text-red-700 hover:text-red-800"
-                          onClick={() => setRemoving(template)}
-                        >
-                          Delete
-                        </button>
-                        </div>
-                      </td>
-                    </tr>
-                  )
-                })}
-              </tbody>
-            </table>
-          </div>
-        </Card>
+                      </div>
+                      <div className="mt-1 flex items-baseline justify-between gap-3">
+                        <h2 className="min-w-0 truncate font-display text-2xl leading-none text-navy">
+                          {template.name}
+                        </h2>
+                        <p className="shrink-0 font-display text-2xl leading-none text-navy sm:text-3xl">
+                          {formatTemplatePrice(template.price)}
+                        </p>
+                      </div>
+                      <div className="mt-2.5 flex flex-wrap gap-1">
+                        {rooms.length > 0 ? (
+                          rooms.map((room) => (
+                            <span
+                              key={room}
+                              className="rounded-full bg-ivory px-2 py-0.5 text-[10px] tracking-wide text-navy"
+                            >
+                              {room}
+                            </span>
+                          ))
+                        ) : (
+                          <span className="text-[10px] text-navy-muted">No rooms</span>
+                        )}
+                      </div>
+                    </div>
+                    <div className="mt-3 flex gap-3">
+                      <Link
+                        to={adminTemplateContentPath(template.id)}
+                        className="text-xs tracking-wide text-gold-deep hover:text-navy"
+                      >
+                        Detail
+                      </Link>
+                      <Link
+                        to={preview.to}
+                        target={preview.openInNewTab ? '_blank' : undefined}
+                        rel={preview.openInNewTab ? 'noopener noreferrer' : undefined}
+                        className="text-xs tracking-wide text-gold-deep hover:text-navy"
+                      >
+                        Preview
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              </Card>
+            )
+          })}
+        </div>
       )}
 
       <TemplateFormModal
@@ -361,7 +359,8 @@ function TemplateFormModal({
       isOpen={template !== null}
       onClose={onClose}
       title={isNew ? 'Add template' : 'Edit template'}
-      className="max-w-2xl"
+      className="max-w-xl"
+      titleClassName="text-2xl"
     >
       <form
         className="space-y-3"
@@ -370,77 +369,84 @@ function TemplateFormModal({
           mutation.mutate()
         }}
       >
-        <Input
-          label="Name"
-          inputSize="sm"
-          value={form.name}
-          error={firstFieldError(fieldErrors, 'name')}
-          onChange={(event) => setField('name', event.target.value)}
-        />
-        <Input
-          label="Slug"
-          inputSize="sm"
-          value={form.slug}
-          hint="midnight-toast is the live React engine."
-          error={firstFieldError(fieldErrors, 'slug')}
-          onChange={(event) => setField('slug', event.target.value.trim().toLowerCase())}
-        />
-        <Input
-          label="Description"
-          inputSize="sm"
-          value={form.description}
-          error={firstFieldError(fieldErrors, 'description')}
-          onChange={(event) => setField('description', event.target.value)}
-        />
-        <div className="flex w-full flex-col gap-1.5 text-left">
-          <label htmlFor="template-cover" className="text-xs font-medium tracking-wide text-navy">
-            Cover
+        <div className="grid gap-3 sm:grid-cols-[9.5rem_1fr] sm:items-start">
+          <label className="group relative block cursor-pointer overflow-hidden rounded-2xl ring-1 ring-line">
+            <img src={preview} alt="" className="h-36 w-full object-cover sm:h-40" />
+            <span className="absolute inset-0 flex items-end bg-linear-to-t from-navy/75 via-navy/10 to-transparent p-2.5 text-[10px] tracking-[0.16em] text-white uppercase">
+              Change cover
+            </span>
+            <input
+              id="template-cover"
+              type="file"
+              accept="image/jpeg,image/png,image/webp,image/gif"
+              className="sr-only"
+              onChange={(event) => {
+                const next = event.target.files?.[0] ?? null
+                setFile(next)
+                setFilePreview((current) => {
+                  if (current) {
+                    URL.revokeObjectURL(current)
+                  }
+                  return next ? URL.createObjectURL(next) : null
+                })
+              }}
+            />
           </label>
-          <img src={preview} alt="" className="h-36 w-full rounded-2xl object-cover" />
-          <input
-            id="template-cover"
-            type="file"
-            accept="image/jpeg,image/png,image/webp,image/gif"
-            onChange={(event) => {
-              const next = event.target.files?.[0] ?? null
-              setFile(next)
-              setFilePreview((current) => {
-                if (current) {
-                  URL.revokeObjectURL(current)
+          <div className="space-y-2.5">
+            <Input
+              label="Name"
+              inputSize="sm"
+              value={form.name}
+              error={firstFieldError(fieldErrors, 'name')}
+              onChange={(event) => setField('name', event.target.value)}
+            />
+            <Input
+              label="Slug"
+              inputSize="sm"
+              value={form.slug}
+              error={firstFieldError(fieldErrors, 'slug')}
+              onChange={(event) => setField('slug', event.target.value.trim().toLowerCase())}
+            />
+            <div className="grid grid-cols-2 gap-2.5">
+              <FieldSelect
+                label="Occasion"
+                value={String(form.occasion_id || '')}
+                error={firstFieldError(fieldErrors, 'occasion_id')}
+                onChange={(value) => setField('occasion_id', Number(value))}
+                options={
+                  occasions?.map((item) => ({ value: String(item.id), label: item.title })) ?? []
                 }
-                return next ? URL.createObjectURL(next) : null
-              })
-            }}
-            className="text-sm text-navy"
-          />
-          <p className="text-xs text-navy-muted">
-            Default cover for this slug shows until you choose a file.
-          </p>
+              />
+              <Input
+                label="Price ₹"
+                inputSize="sm"
+                type="number"
+                min={0}
+                step={1}
+                value={String(form.price)}
+                error={firstFieldError(fieldErrors, 'price')}
+                onChange={(event) => setField('price', Math.max(0, Math.floor(Number(event.target.value) || 0)))}
+              />
+            </div>
+          </div>
         </div>
-        <div className="grid gap-3 sm:grid-cols-2">
-          <FieldSelect
-            label="Occasion"
-            value={String(form.occasion_id || '')}
-            error={firstFieldError(fieldErrors, 'occasion_id')}
-            onChange={(value) => setField('occasion_id', Number(value))}
-            options={
-              occasions?.map((item) => ({ value: String(item.id), label: item.title })) ?? []
-            }
+
+        <label className="flex w-full flex-col gap-1.5 text-left">
+          <span className="text-xs font-medium tracking-wide text-navy">Description</span>
+          <textarea
+            rows={2}
+            value={form.description}
+            onChange={(event) => setField('description', event.target.value)}
+            className="w-full resize-none rounded-2xl border border-line bg-ivory px-3 py-2 text-sm text-navy outline-none focus:border-gold focus:shadow-[0_0_0_4px_rgba(196,163,90,0.18)]"
           />
-          <FieldSelect
-            label="Price"
-            value={String(form.price)}
-            error={firstFieldError(fieldErrors, 'price')}
-            onChange={(value) => setField('price', Number(value))}
-            options={TEMPLATE_PRICES.map((price) => ({
-              value: String(price),
-              label: formatTemplatePrice(price),
-            }))}
-          />
-        </div>
+          {firstFieldError(fieldErrors, 'description') ? (
+            <span className="text-sm text-red-600">{firstFieldError(fieldErrors, 'description')}</span>
+          ) : null}
+        </label>
+
         <div>
           <p className="text-xs font-medium tracking-wide text-navy">Rooms</p>
-          <div className="mt-2 flex flex-wrap gap-2">
+          <div className="mt-1.5 flex flex-wrap gap-1.5">
             {TEMPLATE_ROOM_LABELS.map((room) => {
               const on = form[room.key]
               return (
@@ -448,7 +454,7 @@ function TemplateFormModal({
                   key={room.key}
                   type="button"
                   className={cn(
-                    'rounded-full px-3 py-1.5 text-xs tracking-wide',
+                    'rounded-full px-2.5 py-1 text-[11px] tracking-wide',
                     on ? 'bg-navy text-white' : 'bg-ivory text-navy-muted',
                   )}
                   onClick={() => setField(room.key, !on)}
@@ -459,35 +465,40 @@ function TemplateFormModal({
             })}
           </div>
         </div>
-        <div>
-          <p className="text-xs font-medium tracking-wide text-navy">Status</p>
-          <div className="mt-2 flex gap-2">
-            <Button
-              type="button"
-              size="sm"
-              variant={form.is_active ? 'primary' : 'secondary'}
-              onClick={() => setField('is_active', true)}
+
+        {error ? <p className="text-xs text-red-600">{error}</p> : null}
+
+        <div className="flex items-center justify-between gap-3 border-t border-line/80 pt-3">
+          <button
+            type="button"
+            role="switch"
+            aria-checked={form.is_active}
+            onClick={() => setField('is_active', !form.is_active)}
+            className="flex items-center gap-2 text-xs tracking-wide text-navy"
+          >
+            <span
+              className={cn(
+                'relative h-5 w-9 rounded-full transition-colors',
+                form.is_active ? 'bg-navy' : 'bg-line',
+              )}
             >
-              Active
+              <span
+                className={cn(
+                  'absolute top-0.5 left-0.5 h-4 w-4 rounded-full bg-white transition-transform',
+                  form.is_active && 'translate-x-4',
+                )}
+              />
+            </span>
+            {form.is_active ? 'Active' : 'Inactive'}
+          </button>
+          <div className="flex gap-2">
+            <Button type="button" size="sm" variant="ghost" onClick={onClose}>
+              Cancel
             </Button>
-            <Button
-              type="button"
-              size="sm"
-              variant={!form.is_active ? 'primary' : 'secondary'}
-              onClick={() => setField('is_active', false)}
-            >
-              Inactive
+            <Button type="submit" size="sm" isLoading={mutation.isPending}>
+              {isNew ? 'Create' : 'Save'}
             </Button>
           </div>
-        </div>
-        {error ? <p className="text-xs text-red-600">{error}</p> : null}
-        <div className="flex justify-end gap-2 pt-2">
-          <Button type="button" variant="ghost" onClick={onClose}>
-            Cancel
-          </Button>
-          <Button type="submit" isLoading={mutation.isPending}>
-            {isNew ? 'Create' : 'Save'}
-          </Button>
         </div>
       </form>
     </Modal>
@@ -572,5 +583,35 @@ function FieldSelect({
       </select>
       {error ? <span className="text-sm text-red-600">{error}</span> : null}
     </div>
+  )
+}
+
+function PencilIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" aria-hidden="true">
+      <path
+        d="M4 20h4.2L19 9.2 14.8 5 4 15.8V20Z"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinejoin="round"
+      />
+      <path d="m13.5 6.3 4.2 4.2" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+    </svg>
+  )
+}
+
+function TrashIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" aria-hidden="true">
+      <path d="M5 7h14" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+      <path d="M10 7V5h4v2" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
+      <path
+        d="M7 7l1 12h8l1-12"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinejoin="round"
+      />
+      <path d="M10 11v5M14 11v5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+    </svg>
   )
 }

@@ -12,12 +12,13 @@ import { ApiError, firstFieldError, getApiErrorMessage } from '@/services/http.t
 import { queryKeys } from '@/services/queryKeys.ts'
 import { EmptyState } from '@/shared/components/common/EmptyState.tsx'
 import { LoadingState } from '@/shared/components/common/LoadingState.tsx'
+import { OccasionCard } from '@/shared/components/common/OccasionCard.tsx'
 import { Button } from '@/shared/components/ui/Button.tsx'
-import { Card } from '@/shared/components/ui/Card.tsx'
 import { Input } from '@/shared/components/ui/Input.tsx'
 import { Modal } from '@/shared/components/ui/Modal.tsx'
 import { useOccasions } from '@/shared/hooks/useOccasions.ts'
-import { occasionDefaultImage, occasionImageSrc, occasionTypeLabel } from '@/shared/lib/occasionDisplay.ts'
+import { cn } from '@/shared/lib/cn.ts'
+import { occasionDefaultImage } from '@/shared/lib/occasionDisplay.ts'
 import { OCCASION_TYPES, OCCASION_TYPE_LABELS, type Occasion, type OccasionType } from '@/shared/types/occasion.ts'
 import type { ApiErrorBag } from '@/services/types.ts'
 
@@ -25,9 +26,12 @@ export function AdminTemplateSettingsPage() {
   const queryClient = useQueryClient()
   const occasionsQuery = useOccasions()
   const occasions = occasionsQuery.data ?? []
+  const [typeFilter, setTypeFilter] = useState<OccasionType | 'all'>('all')
   const [editing, setEditing] = useState<Occasion | 'new' | null>(null)
   const [removing, setRemoving] = useState<Occasion | null>(null)
   const [bulkMessage, setBulkMessage] = useState('')
+  const visible =
+    typeFilter === 'all' ? occasions : occasions.filter((item) => item.type === typeFilter)
 
   const refresh = () => {
     void queryClient.invalidateQueries({ queryKey: queryKeys.occasions })
@@ -72,6 +76,18 @@ export function AdminTemplateSettingsPage() {
 
       {bulkMessage ? <p className="mt-4 text-sm text-navy-muted">{bulkMessage}</p> : null}
 
+      <div className="-mx-4 mt-8 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0">
+        <FilterChip label="All" isActive={typeFilter === 'all'} onClick={() => setTypeFilter('all')} />
+        {OCCASION_TYPES.map((type) => (
+          <FilterChip
+            key={type}
+            label={OCCASION_TYPE_LABELS[type]}
+            isActive={typeFilter === type}
+            onClick={() => setTypeFilter(type)}
+          />
+        ))}
+      </div>
+
       {occasionsQuery.isLoading ? (
         <LoadingState label="Loading occasions…" />
       ) : occasionsQuery.isError ? (
@@ -90,53 +106,43 @@ export function AdminTemplateSettingsPage() {
           actionLabel="Create from JSON"
           onAction={() => bulkMutation.mutate()}
         />
+      ) : visible.length === 0 ? (
+        <EmptyState
+          className="mt-8"
+          title="Nothing in this type"
+          description="Switch the filter, or add an occasion for this type."
+          actionLabel="Add occasion"
+          onAction={() => setEditing('new')}
+        />
       ) : (
-        <Card className="mt-8" padding="none">
-          <div className="overflow-x-auto">
-            <table className="min-w-[48rem] w-full text-left text-sm">
-              <thead>
-                <tr className="border-b border-line/80 bg-ivory/70 text-xs tracking-[0.12em] text-navy-muted uppercase">
-                  <th className="px-5 py-3 font-medium">Occasion</th>
-                  <th className="px-5 py-3 font-medium">Type</th>
-                  <th className="px-5 py-3 font-medium">Description</th>
-                  <th className="px-5 py-3 font-medium">
-                    <span className="sr-only">Actions</span>
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {occasions.map((item) => (
-                  <tr key={item.id} className="border-b border-line/60 last:border-0">
-                    <td className="px-5 py-3">
-                      <div className="flex items-center gap-3">
-                        <img src={occasionImageSrc(item)} alt="" className="h-12 w-16 rounded-xl object-cover" />
-                        <p className="font-medium whitespace-nowrap text-navy">{item.title}</p>
-                      </div>
-                    </td>
-                    <td className="px-5 py-3 whitespace-nowrap text-navy-muted">{occasionTypeLabel(item.type)}</td>
-                    <td className="px-5 py-3 text-navy-muted">{item.description}</td>
-                    <td className="px-5 py-3 text-right whitespace-nowrap">
-                      <button
-                        type="button"
-                        className="text-sm text-navy hover:text-gold-deep"
-                        onClick={() => setEditing(item)}
-                      >
-                        Edit
-                      </button>
-                      <button
-                        type="button"
-                        className="ml-4 text-sm text-red-700 hover:text-red-800"
-                        onClick={() => setRemoving(item)}
-                      >
-                        Delete
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </Card>
+        <div className="mt-8 grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+          {visible.map((item) => (
+            <OccasionCard
+              key={item.id}
+              occasion={item}
+              actions={
+                <>
+                  <button
+                    type="button"
+                    aria-label={`Edit ${item.title}`}
+                    className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-white/90 text-navy shadow-soft hover:bg-gold"
+                    onClick={() => setEditing(item)}
+                  >
+                    <PencilIcon />
+                  </button>
+                  <button
+                    type="button"
+                    aria-label={`Delete ${item.title}`}
+                    className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-white/90 text-red-700 shadow-soft hover:bg-red-50"
+                    onClick={() => setRemoving(item)}
+                  >
+                    <TrashIcon />
+                  </button>
+                </>
+              }
+            />
+          ))}
+        </div>
       )}
 
       <OccasionFormModal
@@ -156,6 +162,29 @@ export function AdminTemplateSettingsPage() {
         }}
       />
     </div>
+  )
+}
+
+function FilterChip({
+  label,
+  isActive,
+  onClick,
+}: {
+  label: string
+  isActive: boolean
+  onClick: () => void
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={cn(
+        'shrink-0 rounded-full px-4 py-2 text-sm',
+        isActive ? 'bg-navy text-white' : 'bg-white text-navy-muted',
+      )}
+    >
+      {label}
+    </button>
   )
 }
 
@@ -241,6 +270,7 @@ function OccasionFormModal({
       onClose={onClose}
       title={isNew ? 'Add occasion' : 'Edit occasion'}
       className="max-w-xl"
+      titleClassName="text-2xl"
     >
       <form
         className="space-y-3"
@@ -249,71 +279,80 @@ function OccasionFormModal({
           mutation.mutate()
         }}
       >
-        <Input
-          label="Title"
-          inputSize="sm"
-          value={form.title}
-          error={firstFieldError(fieldErrors, 'title')}
-          onChange={(event) => setForm((current) => ({ ...current, title: event.target.value }))}
-        />
-        <Input
-          label="Description"
-          inputSize="sm"
-          value={form.description}
-          error={firstFieldError(fieldErrors, 'description')}
-          onChange={(event) => setForm((current) => ({ ...current, description: event.target.value }))}
-        />
-        <div className="flex w-full flex-col gap-1.5 text-left">
-          <label htmlFor="occasion-type" className="text-xs font-medium tracking-wide text-navy">
-            Type
+        <div className="grid gap-3 sm:grid-cols-[9.5rem_1fr] sm:items-start">
+          <label className="group relative block cursor-pointer overflow-hidden rounded-2xl ring-1 ring-line">
+            <img src={preview} alt="" className="h-36 w-full object-cover sm:h-40" />
+            <span className="absolute inset-0 flex items-end bg-linear-to-t from-navy/75 via-navy/10 to-transparent p-2.5 text-[10px] tracking-[0.16em] text-white uppercase">
+              Change photo
+            </span>
+            <input
+              id="occasion-thumb"
+              type="file"
+              accept="image/jpeg,image/png,image/webp,image/gif"
+              className="sr-only"
+              onChange={(event) => {
+                const next = event.target.files?.[0] ?? null
+                setFile(next)
+                setFilePreview((current) => {
+                  if (current) {
+                    URL.revokeObjectURL(current)
+                  }
+                  return next ? URL.createObjectURL(next) : null
+                })
+              }}
+            />
           </label>
-          <select
-            id="occasion-type"
-            value={form.type}
-            onChange={(event) => setForm((current) => ({ ...current, type: event.target.value as OccasionType }))}
-            className="h-11 rounded-2xl border border-line bg-ivory px-3 text-sm text-navy outline-none focus:border-gold focus:shadow-[0_0_0_4px_rgba(196,163,90,0.18)] sm:h-10"
-          >
-            {OCCASION_TYPES.map((type) => (
-              <option key={type} value={type}>
-                {OCCASION_TYPE_LABELS[type]}
-              </option>
-            ))}
-          </select>
-          {firstFieldError(fieldErrors, 'type') ? (
-            <span className="text-sm text-red-600">{firstFieldError(fieldErrors, 'type')}</span>
-          ) : null}
+          <div className="space-y-2.5">
+            <Input
+              label="Title"
+              inputSize="sm"
+              value={form.title}
+              error={firstFieldError(fieldErrors, 'title')}
+              onChange={(event) => setForm((current) => ({ ...current, title: event.target.value }))}
+            />
+            <div className="flex w-full flex-col gap-1.5 text-left">
+              <label htmlFor="occasion-type" className="text-xs font-medium tracking-wide text-navy">
+                Type
+              </label>
+              <select
+                id="occasion-type"
+                value={form.type}
+                onChange={(event) => setForm((current) => ({ ...current, type: event.target.value as OccasionType }))}
+                className="h-11 rounded-2xl border border-line bg-ivory px-3 text-sm text-navy outline-none focus:border-gold focus:shadow-[0_0_0_4px_rgba(196,163,90,0.18)] sm:h-10"
+              >
+                {OCCASION_TYPES.map((type) => (
+                  <option key={type} value={type}>
+                    {OCCASION_TYPE_LABELS[type]}
+                  </option>
+                ))}
+              </select>
+              {firstFieldError(fieldErrors, 'type') ? (
+                <span className="text-sm text-red-600">{firstFieldError(fieldErrors, 'type')}</span>
+              ) : null}
+            </div>
+          </div>
         </div>
-        <div className="flex w-full flex-col gap-1.5 text-left">
-          <label htmlFor="occasion-thumb" className="text-xs font-medium tracking-wide text-navy">
-            Thumbnail
-          </label>
-          <img src={preview} alt="" className="h-36 w-full rounded-2xl object-cover" />
-          <input
-            id="occasion-thumb"
-            type="file"
-            accept="image/jpeg,image/png,image/webp,image/gif"
-            onChange={(event) => {
-              const next = event.target.files?.[0] ?? null
-              setFile(next)
-              setFilePreview((current) => {
-                if (current) {
-                  URL.revokeObjectURL(current)
-                }
-                return next ? URL.createObjectURL(next) : null
-              })
-            }}
-            className="text-sm text-navy"
+
+        <label className="flex w-full flex-col gap-1.5 text-left">
+          <span className="text-xs font-medium tracking-wide text-navy">Description</span>
+          <textarea
+            rows={2}
+            value={form.description}
+            onChange={(event) => setForm((current) => ({ ...current, description: event.target.value }))}
+            className="w-full resize-none rounded-2xl border border-line bg-ivory px-3 py-2 text-sm text-navy outline-none focus:border-gold focus:shadow-[0_0_0_4px_rgba(196,163,90,0.18)]"
           />
-          <p className="text-xs text-navy-muted">
-            Default image for this type shows until you choose a file. JPG, PNG, WEBP, or GIF.
-          </p>
-        </div>
+          {firstFieldError(fieldErrors, 'description') ? (
+            <span className="text-sm text-red-600">{firstFieldError(fieldErrors, 'description')}</span>
+          ) : null}
+        </label>
+
         {error ? <p className="text-xs text-red-600">{error}</p> : null}
-        <div className="flex justify-end gap-2 pt-2">
-          <Button type="button" variant="ghost" onClick={onClose}>
+
+        <div className="flex items-center justify-end gap-2 border-t border-line/80 pt-3">
+          <Button type="button" size="sm" variant="ghost" onClick={onClose}>
             Cancel
           </Button>
-          <Button type="submit" isLoading={mutation.isPending}>
+          <Button type="submit" size="sm" isLoading={mutation.isPending}>
             {isNew ? 'Create' : 'Save'}
           </Button>
         </div>
@@ -363,5 +402,35 @@ function DeleteOccasionModal({
         </Button>
       </div>
     </Modal>
+  )
+}
+
+function PencilIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" aria-hidden="true">
+      <path
+        d="M4 20h4.2L19 9.2 14.8 5 4 15.8V20Z"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinejoin="round"
+      />
+      <path d="m13.5 6.3 4.2 4.2" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+    </svg>
+  )
+}
+
+function TrashIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" aria-hidden="true">
+      <path d="M5 7h14" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+      <path d="M10 7V5h4v2" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
+      <path
+        d="M7 7l1 12h8l1-12"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinejoin="round"
+      />
+      <path d="M10 11v5M14 11v5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+    </svg>
   )
 }

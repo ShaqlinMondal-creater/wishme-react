@@ -22,7 +22,8 @@ const settings: {
   end: boolean
   icon: ComponentType
 }[] = [
-  { to: ROUTES.adminCoupons, label: 'Coupons', end: false, icon: CouponIcon },
+  { to: ROUTES.adminCoupons, label: 'Coupons', end: true, icon: CouponIcon },
+  { to: ROUTES.adminCouponUsage, label: 'Usage', end: true, icon: UsageIcon },
   { to: ROUTES.adminBills, label: 'Bills', end: false, icon: BillsIcon },
   { to: ROUTES.adminTemplateSettings, label: 'Occasions', end: false, icon: SettingsIcon },
   { to: ROUTES.adminLogs, label: 'Logs', end: false, icon: LogsIcon },
@@ -151,6 +152,14 @@ function LogsIcon() {
     <svg viewBox="0 0 24 24" className={iconClass()} fill="none" aria-hidden="true">
       <path d="M7 5h10a1.5 1.5 0 0 1 1.5 1.5v13H5.5V6.5A1.5 1.5 0 0 1 7 5Z" stroke="currentColor" strokeWidth="1.6" />
       <path d="M9 9h6M9 12.5h6M9 16h4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+    </svg>
+  )
+}
+
+function UsageIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className={iconClass()} fill="none" aria-hidden="true">
+      <path d="M5 6.5h14M5 12h14M5 17.5h9" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
     </svg>
   )
 }

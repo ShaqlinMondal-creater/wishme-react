@@ -1,5 +1,5 @@
 import { type FormEvent, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { ApiError, firstFieldError, getApiErrorMessage } from '@/services/http.ts'
 import registerImage from '@/assets/auth/register.png'
 import { AuthPanel } from '@/views/auth/components/AuthPanel.tsx'
@@ -7,10 +7,13 @@ import { Button } from '@/shared/components/ui/Button.tsx'
 import { Input } from '@/shared/components/ui/Input.tsx'
 import { ROUTES } from '@/shared/constants/routes.ts'
 import { useAuth } from '@/shared/hooks/useAuth.ts'
+import { getAuthRedirectPath } from '@/shared/lib/authRedirect.ts'
+import { useAuthStore } from '@/shared/store/authStore.ts'
 import type { ApiErrorBag } from '@/services/types.ts'
 
 export function RegisterPage() {
   const navigate = useNavigate()
+  const location = useLocation()
   const { register } = useAuth()
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
@@ -34,7 +37,7 @@ export function RegisterPage() {
 
     try {
       await register(name.trim(), email.trim(), password, passwordConfirmation)
-      navigate(ROUTES.dashboard, { replace: true })
+      navigate(getAuthRedirectPath(location.state, useAuthStore.getState().user?.role), { replace: true })
     } catch (caught) {
       setError(getApiErrorMessage(caught))
       setFieldErrors(caught instanceof ApiError ? caught.errors : undefined)
@@ -55,7 +58,7 @@ export function RegisterPage() {
       footer={
         <p className="text-sm text-navy-muted">
           Already have an account?{' '}
-          <Link to={ROUTES.login} className="text-gold-deep hover:text-navy">
+          <Link to={ROUTES.login} state={location.state} className="text-gold-deep hover:text-navy">
             Sign in
           </Link>
         </p>

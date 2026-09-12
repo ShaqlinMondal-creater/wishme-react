@@ -4,7 +4,7 @@ import { LoadingState } from '@/shared/components/common/LoadingState.tsx'
 import { TemplateCard } from '@/shared/components/common/TemplateCard.tsx'
 import { PageContainer } from '@/shared/components/layout/PageContainer.tsx'
 import { getButtonClasses } from '@/shared/components/ui/buttonStyles.ts'
-import { ROUTES, templateOpenTarget } from '@/shared/constants/routes.ts'
+import { ROUTES, templatePath } from '@/shared/constants/routes.ts'
 import { useTemplates } from '@/shared/hooks/useTemplates.ts'
 
 export function TemplatesSection() {
@@ -36,17 +36,9 @@ export function TemplatesSection() {
           />
         ) : (
           <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {featured.map((template) => {
-              const open = templateOpenTarget(template.slug)
-              return (
-                <TemplateCard
-                  key={template.id}
-                  template={template}
-                  to={open.to}
-                  openInNewTab={open.openInNewTab}
-                />
-              )
-            })}
+            {featured.map((template) => (
+              <TemplateCard key={template.id} template={template} to={templatePath(template.slug)} showBuy />
+            ))}
           </div>
         )}
       </PageContainer>

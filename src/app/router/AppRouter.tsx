@@ -12,6 +12,7 @@ import { DashboardTemplatesPage } from '@/views/customer/pages/DashboardTemplate
 import { OverviewPage } from '@/views/customer/pages/OverviewPage.tsx'
 import { ProfilePage } from '@/views/customer/pages/ProfilePage.tsx'
 import { ProjectsPage } from '@/views/customer/pages/ProjectsPage.tsx'
+import { PurchasePage } from '@/views/customer/pages/PurchasePage.tsx'
 import { HomePage } from '@/views/public/pages/HomePage.tsx'
 import { PricingPage } from '@/views/public/pages/PricingPage.tsx'
 import { SupportPage } from '@/views/public/pages/SupportPage.tsx'
@@ -26,6 +27,7 @@ import { AdminUsersPage } from '@/views/admin/pages/AdminUsersPage.tsx'
 import { AdminWishesPage } from '@/views/admin/pages/AdminWishesPage.tsx'
 import { AdminAccountsPage } from '@/views/admin/pages/AdminAccountsPage.tsx'
 import { AdminCouponsPage } from '@/views/admin/pages/AdminCouponsPage.tsx'
+import { AdminCouponUsagePage } from '@/views/admin/pages/AdminCouponUsagePage.tsx'
 import { AdminBillsPage } from '@/views/admin/pages/AdminBillsPage.tsx'
 import { AdminPlansPage } from '@/views/admin/pages/AdminPlansPage.tsx'
 import { AdminTemplatesPage } from '@/views/admin/pages/AdminTemplatesPage.tsx'
@@ -69,6 +71,7 @@ export function AppRouter() {
             <Route path={ROUTES.dashboardTemplates} element={<DashboardTemplatesPage />} />
             <Route path={ROUTES.billing} element={<BillingPage />} />
             <Route path={ROUTES.profile} element={<ProfilePage />} />
+            <Route path={ROUTES.purchase} element={<PurchasePage />} />
           </Route>
         </Route>
 
@@ -81,6 +84,7 @@ export function AppRouter() {
             <Route path={ROUTES.adminWishes} element={<AdminWishesPage />} />
             <Route path={ROUTES.adminAccounts} element={<AdminAccountsPage />} />
             <Route path={ROUTES.adminCoupons} element={<AdminCouponsPage />} />
+            <Route path={ROUTES.adminCouponUsage} element={<AdminCouponUsagePage />} />
             <Route path={ROUTES.adminBills} element={<AdminBillsPage />} />
             <Route path={ROUTES.adminPlans} element={<AdminPlansPage />} />
             <Route path={ROUTES.adminTemplates} element={<AdminTemplatesPage />} />

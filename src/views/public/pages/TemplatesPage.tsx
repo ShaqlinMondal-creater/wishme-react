@@ -4,7 +4,7 @@ import { EmptyState } from '@/shared/components/common/EmptyState.tsx'
 import { LoadingState } from '@/shared/components/common/LoadingState.tsx'
 import { TemplateCard } from '@/shared/components/common/TemplateCard.tsx'
 import { PageContainer } from '@/shared/components/layout/PageContainer.tsx'
-import { templateOpenTarget } from '@/shared/constants/routes.ts'
+import { templatePath } from '@/shared/constants/routes.ts'
 import { getApiErrorMessage } from '@/services/http.ts'
 import { useOccasions } from '@/shared/hooks/useOccasions.ts'
 import { useTemplates } from '@/shared/hooks/useTemplates.ts'
@@ -92,17 +92,9 @@ export function TemplatesPage() {
           />
         ) : (
           <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {filtered.map((template) => {
-              const open = templateOpenTarget(template.slug)
-              return (
-                <TemplateCard
-                  key={template.id}
-                  template={template}
-                  to={open.to}
-                  openInNewTab={open.openInNewTab}
-                />
-              )
-            })}
+            {filtered.map((template) => (
+              <TemplateCard key={template.id} template={template} to={templatePath(template.slug)} showBuy />
+            ))}
           </div>
         )}
       </PageContainer>

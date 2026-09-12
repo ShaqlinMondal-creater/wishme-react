@@ -3,6 +3,7 @@ export type { ApiEnvelope, ApiErrorBag, AuthPayload, ProfilePayload } from '@/se
 export { queryKeys } from '@/services/queryKeys.ts'
 export { getProfile, login, logout, register } from '@/services/auth.service.ts'
 export { getOccasions, getPricingPlans, getTemplate, getTemplates } from '@/services/catalog.service.ts'
+export { validateCoupon } from '@/services/coupons.service.ts'
 export { createProject, getProject, getProjects, updateProject } from '@/services/projects.service.ts'
 export { fetchProjectUploads, uploadProjectMedia, fetchTemplateUploads, uploadTemplateMedia } from '@/services/uploads.service.ts'
 export { deleteAdminTemplate, deleteAdminUser, fetchAdminTemplates, fetchAdminUsers, getAdminStats, getAdminWishes, updateAdminTemplate, updateAdminUser, createAdminTemplate } from '@/services/admin.service.ts'

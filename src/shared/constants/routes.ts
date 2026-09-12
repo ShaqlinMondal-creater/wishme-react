@@ -14,6 +14,7 @@ export const ROUTES = {
   dashboardTemplates: '/dashboard/templates',
   billing: '/dashboard/billing',
   profile: '/dashboard/profile',
+  purchase: '/purchase/:slug',
   adminLogin: '/admin/login',
   admin: '/admin',
   adminUsers: '/admin/users',
@@ -21,6 +22,7 @@ export const ROUTES = {
   adminWishes: '/admin/wishes',
   adminAccounts: '/admin/accounts',
   adminCoupons: '/admin/coupons',
+  adminCouponUsage: '/admin/coupon-usage',
   adminBills: '/admin/bills',
   adminPlans: '/admin/plans',
   adminTemplates: '/admin/templates',
@@ -40,6 +42,16 @@ export const MIDNIGHT_TOAST_SLUG = 'midnight-toast'
 
 export function templatePath(templateSlug: string) {
   return `/templates/${templateSlug}`
+}
+
+export function purchasePath(slug: string, coupon?: string) {
+  const path = `/purchase/${encodeURIComponent(slug)}`
+
+  if (!coupon) {
+    return path
+  }
+
+  return `${path}?coupon=${encodeURIComponent(coupon)}`
 }
 
 export function demoPath(slug: string) {
@@ -73,6 +85,14 @@ export function homePathForRole(role?: string | null) {
 
 export function adminTemplateContentPath(id: number) {
   return `/admin/templates/${id}/content`
+}
+
+export function adminCouponUsagePath(couponId?: number) {
+  if (couponId == null) {
+    return ROUTES.adminCouponUsage
+  }
+
+  return `${ROUTES.adminCouponUsage}?coupon=${couponId}`
 }
 
 export function projectContentPath(id: number) {

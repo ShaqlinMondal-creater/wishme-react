@@ -5,25 +5,11 @@ import loginImage from '@/assets/auth/login.png'
 import { AuthPanel } from '@/views/auth/components/AuthPanel.tsx'
 import { Button } from '@/shared/components/ui/Button.tsx'
 import { Input } from '@/shared/components/ui/Input.tsx'
-import { homePathForRole, ROUTES } from '@/shared/constants/routes.ts'
+import { ROUTES } from '@/shared/constants/routes.ts'
 import { useAuth } from '@/shared/hooks/useAuth.ts'
+import { getAuthRedirectPath } from '@/shared/lib/authRedirect.ts'
 import { useAuthStore } from '@/shared/store/authStore.ts'
 import type { ApiErrorBag } from '@/services/types.ts'
-
-function getRedirectPath(state: unknown, role?: string | null) {
-  if (
-    state !== null &&
-    typeof state === 'object' &&
-    'from' in state &&
-    typeof state.from === 'string' &&
-    state.from.startsWith('/') &&
-    !state.from.startsWith('/admin')
-  ) {
-    return state.from
-  }
-
-  return homePathForRole(role)
-}
 
 export function LoginPage() {
   const navigate = useNavigate()
@@ -49,7 +35,7 @@ export function LoginPage() {
 
     try {
       await login(email.trim(), password)
-      navigate(getRedirectPath(location.state, useAuthStore.getState().user?.role), { replace: true })
+      navigate(getAuthRedirectPath(location.state, useAuthStore.getState().user?.role), { replace: true })
     } catch (caught) {
       setError(getApiErrorMessage(caught))
       setFieldErrors(caught instanceof ApiError ? caught.errors : undefined)
@@ -70,7 +56,7 @@ export function LoginPage() {
       footer={
         <p className="text-sm text-navy-muted">
           New here?{' '}
-          <Link to={ROUTES.register} className="text-gold-deep hover:text-navy">
+          <Link to={ROUTES.register} state={location.state} className="text-gold-deep hover:text-navy">
             Create an account
           </Link>
           <span className="mx-2 text-navy-muted/50">·</span>

@@ -1,3 +1,5 @@
+export { useAdminCouponUses } from '@/shared/hooks/useAdminCouponUses.ts'
+export { useAdminCoupons } from '@/shared/hooks/useAdminCoupons.ts'
 export { useAdminTemplates } from '@/shared/hooks/useAdminTemplates.ts'
 export { useAdminUsers } from '@/shared/hooks/useAdminUsers.ts'
 export { useAuth } from '@/shared/hooks/useAuth.ts'

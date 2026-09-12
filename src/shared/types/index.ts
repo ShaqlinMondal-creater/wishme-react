@@ -1,3 +1,4 @@
+export type { Coupon, CouponAppliesTo, CouponDiscountType, CouponUse, CouponUseAppliedTo } from '@/shared/types/coupon.ts'
 export type { Occasion, OccasionSlug, OccasionType } from '@/shared/types/occasion.ts'
 export type { Template, TemplatePrice } from '@/shared/types/template.ts'
 export type { Project, ProjectStatus } from '@/shared/types/project.ts'

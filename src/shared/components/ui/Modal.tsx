@@ -8,9 +8,10 @@ export type ModalProps = {
   title?: string
   children: ReactNode
   className?: string
+  titleClassName?: string
 }
 
-export function Modal({ isOpen, onClose, title, children, className }: ModalProps) {
+export function Modal({ isOpen, onClose, title, children, className, titleClassName }: ModalProps) {
   useEffect(() => {
     if (!isOpen) {
       return
@@ -53,7 +54,7 @@ export function Modal({ isOpen, onClose, title, children, className }: ModalProp
         )}
       >
         {title ? (
-          <h2 id="wishme-modal-title" className="font-display text-3xl text-navy">
+          <h2 id="wishme-modal-title" className={cn('font-display text-navy', titleClassName ?? 'text-3xl')}>
             {title}
           </h2>
         ) : null}

@@ -1,14 +1,11 @@
 import { useEffect } from 'react'
 import { Link, Navigate, useParams } from 'react-router-dom'
+import { BuyButton } from '@/shared/components/common/BuyButton.tsx'
 import { EmptyState } from '@/shared/components/common/EmptyState.tsx'
 import { LoadingState } from '@/shared/components/common/LoadingState.tsx'
 import { TemplateCard } from '@/shared/components/common/TemplateCard.tsx'
 import { getButtonClasses } from '@/shared/components/ui/buttonStyles.ts'
-import {
-  createWishPath,
-  ROUTES,
-  templateOpenTarget,
-} from '@/shared/constants/routes.ts'
+import { ROUTES, templateOpenTarget, templatePath } from '@/shared/constants/routes.ts'
 import { useTemplates } from '@/shared/hooks/useTemplates.ts'
 import { PageContainer } from '@/shared/components/layout/PageContainer.tsx'
 import { enabledRoomLabels, formatTemplatePrice, templateCoverSrc } from '@/shared/lib/templateDisplay.ts'
@@ -82,9 +79,7 @@ export function TemplateDetailPage() {
             >
               Preview
             </Link>
-            <Link to={createWishPath(template.slug)} className={getButtonClasses({ size: 'sm' })}>
-              Use this template
-            </Link>
+            <BuyButton template={template} />
           </div>
         </PageContainer>
       </section>
@@ -106,12 +101,7 @@ export function TemplateDetailPage() {
           <p className="text-navy-muted leading-7">{template.description}</p>
           <p className="mt-8 text-xs tracking-[0.18em] text-gold-deep uppercase">Rooms included</p>
           <p className="mt-2 text-navy">{enabledRoomLabels(template).join(' · ') || 'None yet'}</p>
-          <Link
-            to={createWishPath(template.slug)}
-            className={getButtonClasses({ size: 'lg', className: 'mt-10' })}
-          >
-            Use this template
-          </Link>
+          <BuyButton template={template} size="lg" className="mt-10" />
         </PageContainer>
       </article>
 
@@ -121,17 +111,9 @@ export function TemplateDetailPage() {
             <p className="text-xs tracking-[0.28em] text-gold-deep uppercase">Same occasion</p>
             <h3 className="mt-3 font-display text-2xl text-navy sm:text-3xl">Other beginnings</h3>
             <div className="mt-8 grid gap-6 sm:grid-cols-2">
-              {related.map((item) => {
-                const open = templateOpenTarget(item.slug)
-                return (
-                  <TemplateCard
-                    key={item.id}
-                    template={item}
-                    to={open.to}
-                    openInNewTab={open.openInNewTab}
-                  />
-                )
-              })}
+              {related.map((item) => (
+                <TemplateCard key={item.id} template={item} to={templatePath(item.slug)} showBuy />
+              ))}
             </div>
           </PageContainer>
         </section>

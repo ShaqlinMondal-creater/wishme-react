@@ -24,6 +24,7 @@ Open the folder that matches the screen you are working on.
     http.ts             fetch wrapper
     auth.service.ts     login, register, logout, profile
     catalog.service.ts  occasions, templates, pricing
+    coupons.service.ts  public coupon validate / quote
     projects.service.ts customer projects
     uploads.service.ts template + project media files
     admin.service.ts    live users + remaining admin demo lists
@@ -46,6 +47,171 @@ Reuse shortcuts (index files):
 
 LOG
 ---
+
+[2026-09-12] Home occasions section is a 3-up slider
+  Why: The occasions row should slide instead of wrapping as a grid. Desktop shows 3 cards at a time; tablet 2; phone 1, with arrows when there are more.
+  Updated
+    wishme-react/src/views/public/components/OccasionsSection.tsx
+
+[2026-09-12] Guest Buy popup + public coupon validate
+  Why: Guests should see purchase details and try a coupon before signing in. Validate is public so Apply works without a login. Coupon field sits under Purchase, and discount amounts are red.
+  Created
+    wishme-react/src/shared/components/common/PurchaseSummary.tsx
+    wishme-react/src/shared/components/common/GuestPurchaseModal.tsx
+    wishme-react/src/shared/components/common/BuyButton.tsx
+  Updated
+    api-wishme/routes/api.php
+    api-wishme/app/Http/Requests/ValidateCouponRequest.php
+    api-wishme/app/Http/Controllers/CouponsController.php
+    api-wishme/app/Services/QuoteCoupon.php
+    wishme-react/src/views/customer/pages/PurchasePage.tsx
+    wishme-react/src/views/public/pages/TemplateDetailPage.tsx
+    wishme-react/src/shared/components/common/TemplateCard.tsx
+    wishme-react/src/shared/components/common/index.ts
+    wishme-react/src/shared/constants/routes.ts
+
+[2026-09-12] Purchase coupon apply + validate API
+  Why: Checkout needs a coupon field. The API checks the code against live coupon rules and returns the discounted GST-inclusive total. The purchase summary then shows price + tax = payable.
+  Created
+    api-wishme/app/Support/InclusiveGst.php
+    api-wishme/app/Services/QuoteCoupon.php
+    api-wishme/app/Http/Requests/ValidateCouponRequest.php
+    wishme-react/src/services/coupons.service.ts
+  Updated
+    api-wishme/app/Http/Controllers/CouponsController.php
+    api-wishme/app/Models/CouponsModel.php
+    api-wishme/routes/api.php
+    wishme-react/src/views/customer/pages/PurchasePage.tsx
+    wishme-react/src/shared/types/coupon.ts
+    wishme-react/src/shared/lib/gst.ts
+    wishme-react/src/services/index.ts
+
+[2026-09-12] Purchase page shows GST-inclusive summary
+  Why: Catalogue prices include tax. The purchase page now splits that into price + 18% GST = total on the right, with a Purchase button under the summary.
+  Created
+    wishme-react/src/shared/lib/gst.ts
+  Updated
+    wishme-react/src/views/customer/pages/PurchasePage.tsx
+
+[2026-09-12] Public Buy goes to purchase, then login if needed
+  Why: Buying a template should open a purchase detail page. Guests are sent to sign in or register, then returned to that purchase. Logged-in customers go straight there.
+  Created
+    wishme-react/src/views/customer/pages/PurchasePage.tsx
+    wishme-react/src/shared/lib/authRedirect.ts
+  Updated
+    wishme-react/src/shared/components/common/TemplateCard.tsx
+    wishme-react/src/views/public/pages/TemplateDetailPage.tsx
+    wishme-react/src/views/public/pages/TemplatesPage.tsx
+    wishme-react/src/views/public/components/TemplatesSection.tsx
+    wishme-react/src/views/customer/pages/DashboardTemplatesPage.tsx
+    wishme-react/src/views/auth/pages/LoginPage.tsx
+    wishme-react/src/views/auth/pages/RegisterPage.tsx
+    wishme-react/src/shared/constants/routes.ts
+    wishme-react/src/app/router/AppRouter.tsx
+
+[2026-09-12] Coupon usage filters
+  Why: The usage table needed search, coupon, template/subscription, and date filters. GET /admin/coupons/uses now accepts those query params.
+  Updated
+    api-wishme/app/Http/Controllers/CouponsController.php
+    wishme-react/src/views/admin/pages/AdminCouponUsagePage.tsx
+    wishme-react/src/services/admin.service.ts
+
+[2026-09-12] Usage sits under Coupons in admin
+  Why: Coupon usage needed its own label, not a block buried on the coupons page. Admin sidebar now has Usage under Coupons, and that page always shows the usage table.
+  Created
+    wishme-react/src/views/admin/pages/AdminCouponUsagePage.tsx
+  Updated
+    wishme-react/src/views/admin/components/AdminSidebar.tsx
+    wishme-react/src/views/admin/pages/AdminCouponsPage.tsx
+    wishme-react/src/shared/constants/routes.ts
+    wishme-react/src/app/router/AppRouter.tsx
+
+[2026-09-12] Subscription coupon uses store a period
+  Why: A template use is one checkout. A subscription use needs the plan window, so t_coupon_uses now has starts_at and ends_at. Same unpushed migration.
+  Updated
+    api-wishme/database/migrations/2026_09_12_153000_create_coupon_uses_table.php
+    api-wishme/app/Models/CouponUsesModel.php
+    wishme-react/src/shared/types/coupon.ts
+    wishme-react/src/shared/lib/couponDisplay.ts
+    wishme-react/src/views/admin/pages/AdminCouponsPage.tsx
+
+[2026-09-12] Coupon usage API and admin table
+  Why: Admin needed to see who used a code. Usage lives in t_coupon_uses. GET /admin/coupons/uses lists rows. The coupons page now has a Usage table under the cards.
+  Created
+    api-wishme/database/migrations/2026_09_12_153000_create_coupon_uses_table.php
+    api-wishme/app/Enums/CouponUseAppliedTo.php
+    api-wishme/app/Models/CouponUsesModel.php
+    wishme-react/src/shared/hooks/useAdminCouponUses.ts
+  Updated
+    api-wishme/app/Http/Controllers/CouponsController.php
+    api-wishme/app/Models/CouponsModel.php
+    api-wishme/app/Models/UsersModel.php
+    api-wishme/routes/api.php
+    wishme-react/src/views/admin/pages/AdminCouponsPage.tsx
+    wishme-react/src/services/admin.service.ts
+    wishme-react/src/services/queryKeys.ts
+    wishme-react/src/shared/types/coupon.ts
+    wishme-react/src/shared/types/index.ts
+    wishme-react/src/shared/hooks/index.ts
+    wishme-react/src/shared/lib/formatDate.ts
+
+[2026-09-12] Admin coupons live on t_coupons
+  Why: Coupons were a coming-soon page. Admin can now create codes that apply to template price, subscription price, or both, as flat rupees or a percent.
+  Created
+    api-wishme/database/migrations/2026_09_12_151000_create_coupons_table.php
+    api-wishme/app/Enums/CouponDiscountType.php
+    api-wishme/app/Enums/CouponAppliesTo.php
+    api-wishme/app/Models/CouponsModel.php
+    api-wishme/app/Http/Requests/Concerns/ValidatesCouponPayload.php
+    api-wishme/app/Http/Requests/StoreCouponRequest.php
+    api-wishme/app/Http/Requests/UpdateCouponRequest.php
+    api-wishme/app/Http/Controllers/CouponsController.php
+    wishme-react/src/shared/types/coupon.ts
+    wishme-react/src/shared/lib/couponDisplay.ts
+    wishme-react/src/shared/hooks/useAdminCoupons.ts
+  Updated
+    api-wishme/routes/api.php
+    wishme-react/src/views/admin/pages/AdminCouponsPage.tsx
+    wishme-react/src/services/admin.service.ts
+    wishme-react/src/services/queryKeys.ts
+    wishme-react/src/shared/types/index.ts
+    wishme-react/src/shared/hooks/index.ts
+
+[2026-09-12] Admin occasions use photo cards
+  Why: The compact side-by-side rows did not feel like cards. Admin occasions now use the same photo-on-top card as the public site, with pencil and trash on the image.
+  Updated
+    wishme-react/src/views/admin/pages/AdminTemplateSettingsPage.tsx
+    wishme-react/src/shared/components/common/OccasionCard.tsx
+
+[2026-09-12] Compact admin occasion cards
+  Why: Occasions were still a table while templates used side-by-side cards. They now match: cover left, type + title, pencil/trash on the photo, type chips, and the same compact add/edit popup.
+  Updated
+    wishme-react/src/views/admin/pages/AdminTemplateSettingsPage.tsx
+
+[2026-09-12] Compact add/edit template popup
+  Why: The form was a long stack of fields. Cover is now a clickable thumbnail beside name, slug, occasion, and price. Description is two lines. Status is a switch. Actions sit on one footer row. Occasion add/edit uses the same layout.
+  Updated
+    wishme-react/src/views/admin/pages/AdminTemplatesPage.tsx
+    wishme-react/src/views/admin/pages/AdminTemplateSettingsPage.tsx
+    wishme-react/src/shared/components/ui/Modal.tsx
+
+[2026-09-12] Compact admin template cards
+  Why: Tall plan-style cards felt messy. Admin templates now use a short side-by-side layout, room chips, and pencil/trash icons for edit and delete.
+  Updated
+    wishme-react/src/views/admin/pages/AdminTemplatesPage.tsx
+
+[2026-09-12] Template cards highlight price like plans
+  Why: Admin templates were a table with a small price cell. They now use plan-style cards with a large display price. Public template cards show the same highlighted ₹ amount instead of a tiny pill.
+  Updated
+    wishme-react/src/views/admin/pages/AdminTemplatesPage.tsx
+    wishme-react/src/shared/components/common/TemplateCard.tsx
+
+[2026-09-12] Admin template price is a number input
+  Why: Price was locked to a 149 / 249 / 499 select. Admin can type any rupee amount. API now accepts an integer from 0, not only those three values.
+  Updated
+    wishme-react/src/views/admin/pages/AdminTemplatesPage.tsx
+    api-wishme/app/Http/Requests/Concerns/ValidatesTemplatePayload.php
+    api-wishme/app/Services/TemplateBulkCreate.php
 
 [2026-09-12] Drop leftover MySQL foreign keys
   Why: 2026_09_12_110000 and 123000 already ran on the server with foreign keys. Laravel will not re-run those files after they were edited. This new migration drops the remaining keys so relations stay on the models only.
