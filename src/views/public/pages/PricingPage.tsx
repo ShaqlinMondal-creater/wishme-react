@@ -2,12 +2,11 @@ import { Link } from 'react-router-dom'
 import giftImage from '@/assets/auth/register.png'
 import atelierImage from '@/assets/home/template-rakhi-atelier.png'
 import { pricingFaqs } from '@/views/public/data/pricingFaqs.ts'
-import { Card } from '@/shared/components/ui/Card.tsx'
+import { PricingPlanCard } from '@/shared/components/common/PricingPlanCard.tsx'
 import { getButtonClasses } from '@/shared/components/ui/buttonStyles.ts'
 import { ROUTES } from '@/shared/constants/routes.ts'
 import { pricingPlans } from '@/shared/data/pricing.ts'
 import { PageContainer } from '@/shared/components/layout/PageContainer.tsx'
-import { cn } from '@/shared/lib/cn.ts'
 
 export function PricingPage() {
   return (
@@ -29,40 +28,9 @@ export function PricingPage() {
 
       <section className="bg-cream py-14 sm:py-20">
         <PageContainer width="wide">
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid auto-rows-fr items-stretch gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {pricingPlans.map((plan) => (
-              <Card key={plan.id} tone={plan.highlighted ? 'navy' : 'light'}>
-                <p className={cn('text-sm tracking-wide', plan.highlighted ? 'text-gold' : 'text-gold-deep')}>
-                  {plan.name}
-                </p>
-                <p className="mt-3 font-display text-5xl">{plan.price}</p>
-                <p className={cn('mt-1 text-sm', plan.highlighted ? 'text-gold-soft' : 'text-navy-muted')}>
-                  {plan.cadence}
-                </p>
-                <p className={cn('mt-4 text-sm leading-6', plan.highlighted ? 'text-gold-soft' : 'text-navy-muted')}>
-                  {plan.description}
-                </p>
-                <ul className="mt-6 space-y-2 text-sm">
-                  {plan.features.map((feature) => (
-                    <li key={feature} className="flex gap-2">
-                      <span className={plan.highlighted ? 'text-gold' : 'text-gold-deep'} aria-hidden="true">
-                        ·
-                      </span>
-                      <span>{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-                <Link
-                  to={ROUTES.register}
-                  className={getButtonClasses({
-                    variant: plan.highlighted ? 'inverse' : 'secondary',
-                    fullWidth: true,
-                    className: 'mt-8',
-                  })}
-                >
-                  {plan.ctaLabel}
-                </Link>
-              </Card>
+              <PricingPlanCard key={plan.id} plan={plan} to={ROUTES.register} />
             ))}
           </div>
         </PageContainer>

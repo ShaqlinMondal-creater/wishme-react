@@ -5,6 +5,7 @@ import { HowItWorksSection } from '@/views/public/components/HowItWorksSection.t
 import { MemorySection } from '@/views/public/components/MemorySection.tsx'
 import { OccasionsSection } from '@/views/public/components/OccasionsSection.tsx'
 import { PricingPreviewSection } from '@/views/public/components/PricingPreviewSection.tsx'
+import { RoomsSection } from '@/views/public/components/RoomsSection.tsx'
 import { StoriesSection } from '@/views/public/components/StoriesSection.tsx'
 import { TemplatesSection } from '@/views/public/components/TemplatesSection.tsx'
 
@@ -13,6 +14,7 @@ export function HomePage() {
     <>
       <HeroSection />
       <MemorySection />
+      <RoomsSection />
       <DemoWishSection />
       <OccasionsSection />
       <TemplatesSection />

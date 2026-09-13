@@ -91,7 +91,7 @@ export function TemplatesPage() {
             description="Templates appear here after they are added in Admin."
           />
         ) : (
-          <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-10 grid auto-rows-fr gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {filtered.map((template) => (
               <TemplateCard key={template.id} template={template} to={templatePath(template.slug)} showBuy />
             ))}

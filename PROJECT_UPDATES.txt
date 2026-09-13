@@ -48,6 +48,85 @@ Reuse shortcuts (index files):
 LOG
 ---
 
+[2026-09-12] How it works is three photographed steps, not empty cream cards
+  Why: The section read as three hollow boxes. It now walks Choose → Fill → Send with stills, like the rest of the home.
+  Updated
+    wishme-react/src/views/public/components/HowItWorksSection.tsx
+    wishme-react/src/views/public/data/demo.ts
+
+[2026-09-12] Home templates show six compact cards
+  Why: The row should preview six beginnings, not three. Same grid: three across, two deep.
+  Updated
+    wishme-react/src/views/public/components/TemplatesSection.tsx
+
+[2026-09-12] Home templates are a compact three-up row
+  Why: The featured Midnight Toast card was too tall. Same doors, shorter stills, one-line footer — price, a clipped line, Buy.
+  Updated
+    wishme-react/src/views/public/components/TemplatesSection.tsx
+    wishme-react/src/shared/components/common/TemplateCard.tsx
+
+[2026-09-12] Template cards are photo-forward doors with a slim footer
+  Why: The stacked cards still had a thin crop and a hollow white well. The still now fills the card, the name sits on a dark gradient, and Details is gone — the photograph is the door, Buy is the only action.
+  Updated
+    wishme-react/src/shared/components/common/TemplateCard.tsx
+    wishme-react/src/views/public/components/TemplatesSection.tsx
+
+[2026-09-12] Home templates: Midnight Toast leads, names sit in the body
+  Why: White titles on pale covers were unreadable, and the three shop cards felt identical. The engine template is now the tall door; names, prices and Buy sit on one line so the stills can stay stills.
+  Updated
+    wishme-react/src/views/public/components/TemplatesSection.tsx
+    wishme-react/src/shared/components/common/TemplateCard.tsx
+    wishme-react/src/views/public/pages/TemplatesPage.tsx
+
+[2026-09-12] Rooms section is five doors, not five text columns
+  Why: “Inside a wish” read as a flat list on empty ivory. Each room is now a still from the house — letter, stories, moments, privacy, gift — in the order they walk.
+  Updated
+    wishme-react/src/views/public/components/RoomsSection.tsx
+
+[2026-09-12] Memory section is one framed idea, not a collage
+  Why: The home “idea” block looked unfinished — a florist still-life with a gift sticker and empty cream beside it. It is now one letter panel with Private / Personal / Kept filling the other side.
+  Updated
+    wishme-react/src/views/public/components/MemorySection.tsx
+
+[2026-09-12] Pricing cards are equal height with aligned buttons
+  Why: Home pricing looked broken — side cards stretched with empty space while Signature sat shorter. All three plans now share one card layout so name, price, features and CTA line up.
+  Created
+    wishme-react/src/shared/components/common/PricingPlanCard.tsx
+  Updated
+    wishme-react/src/views/public/components/PricingPreviewSection.tsx
+    wishme-react/src/views/public/pages/PricingPage.tsx
+    wishme-react/src/shared/components/common/index.ts
+
+[2026-09-12] Home page checked and corrected from live screenshots
+  Why: The first editorial pass looked too dark, reused the same cake photo, and the rooms block read as a generic grid. Overlay, image choice, rooms, slider fades, and empty how-it-works were fixed after reviewing each section.
+  Updated
+    wishme-react/src/views/public/components/HeroSection.tsx
+    wishme-react/src/views/public/components/MemorySection.tsx
+    wishme-react/src/views/public/components/RoomsSection.tsx
+    wishme-react/src/views/public/components/HowItWorksSection.tsx
+    wishme-react/src/views/public/components/CtaSection.tsx
+    wishme-react/src/views/public/components/OccasionsSection.tsx
+    wishme-react/src/views/public/components/StoriesSection.tsx
+    wishme-react/src/views/public/components/PricingPreviewSection.tsx
+
+[2026-09-12] Home page editorial pass
+  Why: The landing repeated the same three-card photo grid. It now reads as a quieter product story — cinematic hero, rooms of a wish, sample, occasions slider, three featured templates, and a timeline instead of more stock cards.
+  Created
+    wishme-react/src/views/public/components/RoomsSection.tsx
+  Updated
+    wishme-react/src/views/public/pages/HomePage.tsx
+    wishme-react/src/views/public/components/HeroSection.tsx
+    wishme-react/src/views/public/components/MemorySection.tsx
+    wishme-react/src/views/public/components/DemoWishSection.tsx
+    wishme-react/src/views/public/components/OccasionsSection.tsx
+    wishme-react/src/views/public/components/TemplatesSection.tsx
+    wishme-react/src/views/public/components/HowItWorksSection.tsx
+    wishme-react/src/views/public/components/StoriesSection.tsx
+    wishme-react/src/views/public/components/PricingPreviewSection.tsx
+    wishme-react/src/views/public/components/CtaSection.tsx
+    wishme-react/src/shared/components/common/OccasionCard.tsx
+    wishme-react/src/shared/components/common/TemplateCard.tsx
+
 [2026-09-12] Home occasions section is a 3-up slider
   Why: The occasions row should slide instead of wrapping as a grid. Desktop shows 3 cards at a time; tablet 2; phone 1, with arrows when there are more.
   Updated

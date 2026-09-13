@@ -12,8 +12,8 @@ export function OccasionsSection() {
   const { data: occasions, isLoading } = useOccasions()
 
   return (
-    <section className="bg-white">
-      <PageContainer width="wide" className="py-14 sm:py-20">
+    <section className="scroll-mt-24 bg-white">
+      <PageContainer width="wide" className="py-16 sm:py-24">
         {isLoading ? (
           <>
             <OccasionsHeading />
@@ -41,7 +41,7 @@ function OccasionsHeading({ actions }: { actions?: ReactNode }) {
     <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
       <div className="max-w-2xl">
         <p className="text-xs tracking-[0.28em] text-gold-deep uppercase">Occasions</p>
-        <h2 className="mt-3 font-display text-3xl text-navy sm:text-4xl">Choose the moment worth keeping</h2>
+        <h2 className="mt-3 font-display text-3xl text-navy sm:text-5xl">Choose the moment worth keeping</h2>
         <p className="mt-3 text-navy-muted leading-7">
           Birthday, anniversary, Raksha Bandhan, Bhai Phota — each template is a room waiting for
           their name.
@@ -113,11 +113,12 @@ function OccasionSlider({ occasions }: { occasions: Occasion[] }) {
           ) : null
         }
       />
+      <div className="mt-10">
       <div
         ref={scrollerRef}
         role="region"
         aria-label="Occasions"
-        className="mt-10 flex gap-5 overflow-x-auto scroll-smooth snap-x snap-mandatory pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        className="flex gap-5 overflow-x-auto scroll-smooth snap-x snap-mandatory pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
         {occasions.map((occasion) => (
           <div
@@ -127,10 +128,12 @@ function OccasionSlider({ occasions }: { occasions: Occasion[] }) {
           >
             <OccasionCard
               occasion={occasion}
+              layout="cover"
               to={`${ROUTES.templates}?occasion=${occasion.type}`}
             />
           </div>
         ))}
+      </div>
       </div>
     </div>
   )

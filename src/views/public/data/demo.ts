@@ -64,5 +64,3 @@ export const demoStories = [
     image: storyAarav,
   },
 ]
-
-export const howItWorksImages = [birthdayStill, letterScene, storyAnanya]

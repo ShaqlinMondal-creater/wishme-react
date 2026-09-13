@@ -4,8 +4,10 @@ import gsap from 'gsap'
 import heroImage from '@/assets/home/occasion-birthday.png'
 import { PageContainer } from '@/shared/components/layout/PageContainer.tsx'
 import { getButtonClasses } from '@/shared/components/ui/buttonStyles.ts'
-import { ROUTES } from '@/shared/constants/routes.ts'
+import { demoPath, MIDNIGHT_TOAST_SLUG, ROUTES } from '@/shared/constants/routes.ts'
 import { demoWish } from '@/views/public/data/demo.ts'
+
+const marks = ['Private link', 'Photographs', 'A song', 'Five rooms']
 
 export function HeroSection() {
   const rootRef = useRef<HTMLElement>(null)
@@ -17,10 +19,10 @@ export function HeroSection() {
 
     const context = gsap.context(() => {
       gsap.from('[data-hero-item]', {
-        y: 22,
+        y: 18,
         opacity: 0,
-        duration: 0.75,
-        stagger: 0.1,
+        duration: 0.7,
+        stagger: 0.08,
         ease: 'power2.out',
       })
     }, rootRef)
@@ -31,71 +33,74 @@ export function HeroSection() {
   }, [])
 
   return (
-    <section ref={rootRef} className="relative overflow-hidden bg-navy">
+    <section ref={rootRef} className="relative isolate overflow-hidden bg-navy">
       <img
         src={heroImage}
         alt=""
-        className="absolute inset-0 h-full w-full object-cover object-center"
+        className="absolute inset-0 h-full w-full object-cover object-[70%_center]"
       />
-      <div className="absolute inset-0 bg-linear-to-t from-navy/92 via-navy/55 to-navy/25" />
+      <div className="absolute inset-0 bg-linear-to-r from-navy/90 via-navy/55 to-navy/15" />
+      <div className="absolute inset-0 bg-linear-to-t from-navy/70 via-transparent to-navy/20" />
 
       <PageContainer
         width="wide"
-        className="relative flex min-h-[85svh] flex-col justify-center gap-10 py-16 pb-28 md:pb-16 lg:grid lg:grid-cols-2 lg:items-center lg:py-24"
+        className="relative grid items-center gap-10 py-16 lg:min-h-[calc(100svh-4.5rem)] lg:grid-cols-[minmax(0,1fr)_22rem] lg:gap-14 lg:py-20 xl:grid-cols-[minmax(0,1fr)_24rem]"
       >
-        <div>
-          <p data-hero-item className="text-xs tracking-[0.28em] text-gold uppercase">
+        <div className="max-w-xl">
+          <p data-hero-item className="text-[11px] tracking-[0.32em] text-gold uppercase">
             A LIWAAS experience
           </p>
           <h1
             data-hero-item
-            className="mt-4 font-display text-4xl leading-[1.08] text-white sm:text-5xl md:text-6xl lg:text-7xl"
+            className="mt-4 font-display text-4xl leading-[1.08] text-white sm:text-5xl lg:text-6xl"
           >
-            Wishes that feel
-            <span className="italic"> held</span>, not sent.
+            A wish they can
+            <span className="italic text-gold-soft"> walk back into</span>.
           </h1>
-          <p data-hero-item className="mt-5 max-w-xl text-base leading-7 text-gold-soft sm:mt-6 sm:text-lg">
-            WISHME is a private digital keepsake. Write their name, add your photographs and a
-            song, then share a moment made for one person.
+          <p data-hero-item className="mt-5 max-w-md text-base leading-7 text-gold-soft/95 sm:text-lg">
+            Not a forward. A private room with their name on the door — your letter, photographs,
+            a song, and a gift waiting at the end.
           </p>
-          <div data-hero-item className="mt-7 flex w-full flex-col gap-3 sm:mt-8 sm:w-auto sm:flex-row">
-            <Link to={ROUTES.createProject} className={getButtonClasses({ size: 'lg', className: 'w-full sm:w-auto' })}>
-              Create a wish
+          <div data-hero-item className="mt-8 flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
+            <Link to={ROUTES.templates} className={getButtonClasses({ size: 'lg', className: 'w-full sm:w-auto' })}>
+              Begin a wish
             </Link>
             <Link
-              to={ROUTES.templates}
+              to={demoPath(MIDNIGHT_TOAST_SLUG)}
+              target="_blank"
+              rel="noopener noreferrer"
               className={getButtonClasses({
                 variant: 'inverse',
                 size: 'lg',
                 className: 'w-full sm:w-auto',
               })}
             >
-              Browse templates
+              Open a sample
             </Link>
           </div>
+          <ul data-hero-item className="mt-8 flex flex-wrap gap-x-5 gap-y-2 text-[11px] tracking-[0.18em] text-gold-soft/85 uppercase">
+            {marks.map((mark) => (
+              <li key={mark} className="flex items-center gap-2">
+                <span className="h-px w-3.5 bg-gold" aria-hidden="true" />
+                {mark}
+              </li>
+            ))}
+          </ul>
         </div>
 
         <article
           data-hero-item
-          className="relative mx-auto w-full max-w-md rounded-[2rem] border border-white/15 bg-white/95 p-6 shadow-lift backdrop-blur-sm"
+          className="relative mx-auto hidden w-full max-w-md overflow-hidden rounded-[1.75rem] border border-white/20 bg-white shadow-lift lg:mx-0 lg:block"
         >
-          <p className="text-xs tracking-[0.22em] text-gold-deep uppercase">{demoWish.occasion}</p>
-          <h2 className="mt-2 font-display text-3xl text-navy sm:text-4xl">{demoWish.title}</h2>
-          <p className="mt-1 text-sm text-navy-muted">
-            For {demoWish.recipient} · from {demoWish.from} · {demoWish.date}
-          </p>
-          <p className="mt-4 text-sm leading-6 text-navy-muted">{demoWish.message}</p>
-          <div className="mt-5 grid grid-cols-3 gap-2.5">
-            {demoWish.photos.map((photo) => (
-              <img
-                key={photo.alt}
-                src={photo.src}
-                alt={photo.alt}
-                className="h-20 w-full rounded-2xl object-cover sm:h-24"
-              />
-            ))}
+          <img src={demoWish.photos[1].src} alt="" className="h-44 w-full object-cover sm:h-48" />
+          <div className="p-5 sm:p-6">
+            <p className="text-[10px] tracking-[0.22em] text-gold-deep uppercase">{demoWish.occasion}</p>
+            <h2 className="mt-2 font-display text-3xl text-navy">For {demoWish.recipient}</h2>
+            <p className="mt-1 text-sm text-navy-muted">
+              From {demoWish.from} · {demoWish.date}
+            </p>
+            <p className="mt-3 line-clamp-3 text-sm leading-6 text-navy-muted">{demoWish.message}</p>
           </div>
-          <p className="mt-4 text-xs tracking-[0.16em] text-navy-muted uppercase">{demoWish.song}</p>
         </article>
       </PageContainer>
     </section>
