@@ -48,6 +48,11 @@ Reuse shortcuts (index files):
 LOG
 ---
 
+[2026-09-13] Demo templates match the live Occasion type so Vercel can build
+  Why: tsc failed on Vercel — occasion was still a string. Each demo row now has occasion_id and a full occasion object.
+  Updated
+    wishme-react/src/shared/data/templates.ts
+
 [2026-09-12] How it works is three photographed steps, not empty cream cards
   Why: The section read as three hollow boxes. It now walks Choose → Fill → Send with stills, like the rest of the home.
   Updated
